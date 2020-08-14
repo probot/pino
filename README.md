@@ -20,6 +20,38 @@ You can test the environment variables by setting them inline
 node example | LOG_FORMAT=json node cli.js
 ```
 
+## Programmatic usage
+
+`@probot/pino` exports a `getTransformStream()` method which can be passed as 2nd argument to `pino()`
+
+```js
+import pino from "pino";
+import { getTransformStream } from "@probot/pino";
+
+const log = pino(
+  {
+    name: "probot",
+  },
+  getTransformStream()
+);
+```
+
+This won't log anything to stdout though. In order to pass the formatted logs back to stdout, do the following
+
+```js
+import pino from "pino";
+import { getTransformStream } from "@probot/pino";
+
+const transform = getTransformStream();
+transform.pipe(pino.destination(1));
+const log = pino(
+  {
+    name: "probot",
+  },
+  transform
+);
+```
+
 ## Options
 
 `@probot/pino` can be configured using environment variables
@@ -37,3 +69,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md)
 ## License
 
 [ISC](LICENSE)
+
+```
+
+```
