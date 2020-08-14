@@ -4,6 +4,8 @@ const pump = require("pump");
 const split = require("split2");
 const prettyFactory = require("pino-pretty");
 
+const formattingEnabled = process.env.LOG_FORMAT !== "json";
+
 const pretty = prettyFactory({
   ignore: [
     // default pino keys
@@ -26,4 +28,8 @@ const probotTransport = new Transform({
   },
 });
 
-pump(process.stdin, split(), probotTransport, process.stdout);
+if (formattingEnabled) {
+  pump(process.stdin, split(), probotTransport, process.stdout);
+} else {
+  pump(process.stdin, process.stdout);
+}
