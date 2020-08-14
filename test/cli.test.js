@@ -28,5 +28,18 @@ test("cli", (t) => {
     }
   );
 
+  t.test("LOG_FORMAT=json", (t) => {
+    t.plan(1);
+    const child = spawn(nodeBinaryPath, [cliPath], {
+      env: { ...env, LOG_FORMAT: "json" },
+    });
+    child.on("error", t.threw);
+    child.stdout.on("data", (data) => {
+      t.is(data.toString(), logLine);
+    });
+    child.stdin.write(logLine);
+    t.tearDown(() => child.kill());
+  });
+
   t.end();
 });
