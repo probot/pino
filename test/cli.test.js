@@ -1,7 +1,6 @@
 const path = require("path");
 const spawn = require("child_process").spawn;
 const { createServer } = require("http");
-const { req } = require("pino-std-serializers");
 
 const test = require("tap").test;
 
