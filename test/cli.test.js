@@ -41,5 +41,18 @@ test("cli", (t) => {
     t.tearDown(() => child.kill());
   });
 
+  t.test("LOG_LEVEL_IN_STRING=true", (t) => {
+    t.plan(1);
+    const child = spawn(nodeBinaryPath, [cliPath], {
+      env: { ...env, LOG_FORMAT: "json", LOG_LEVEL_IN_STRING: "true" },
+    });
+    child.on("error", t.threw);
+    child.stdout.on("data", (data) => {
+      t.is(data.toString(), logLine.replace('"level":30', '"level":"info"'));
+    });
+    child.stdin.write(logLine);
+    t.tearDown(() => child.kill());
+  });
+
   t.end();
 });
