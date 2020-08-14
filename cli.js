@@ -26,6 +26,7 @@ const pretty = prettyFactory({
     "res",
     "responseTime",
   ].join(","),
+  errorProps: ["event", "status", "headers", "request"].join(","),
 });
 
 const probotTransport = new Transform({
