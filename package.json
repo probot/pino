@@ -1,0 +1,29 @@
+{
+  "name": "@probot/pino",
+  "version": "1.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "formats pino logs and sends errors to Sentry",
+  "main": "index.js",
+  "scripts": {
+    "test": "tap 'test/*.js'"
+  },
+  "keywords": [
+    "pino"
+  ],
+  "author": "Gregor Martynus (https://twitter.com/gr2m)",
+  "license": "MIT",
+  "repository": "https://github.com/probot/pino",
+  "devDependencies": {
+    "@types/pino": "^6.3.0",
+    "pino": "^6.5.1",
+    "tap": "^14.10.8"
+  },
+  "dependencies": {
+    "pino-pretty": "^4.1.0",
+    "pump": "^3.0.0",
+    "readable-stream": "^3.6.0",
+    "split2": "^3.1.1"
+  }
+}
