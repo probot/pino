@@ -1,5 +1,3 @@
-# 🚧 Work in Progress - see [#1](https://github.com/probot/pino/pull/1)
-
 # `@probot/pino`
 
 > formats [pino](https://github.com/pinojs/pino) logs and sends them to [sentry](https://sentry.io)
