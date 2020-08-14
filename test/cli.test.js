@@ -33,6 +33,23 @@ test("cli", (t) => {
     }
   );
 
+  t.test("errors include event, status, headers, and request keys", (t) => {
+    t.plan(4);
+    const child = spawn(nodeBinaryPath, [cliPath], { env });
+    child.on("error", t.threw);
+    child.stdout.on("data", (data) => {
+      t.match(data.toString(), /event: "installation_repositories.added"/);
+      t.match(data.toString(), /status: 500/);
+      t.match(data.toString(), /x-github-request-id: "789"/);
+      t.match(
+        data.toString(),
+        /url: "https:\/\/api.github.com\/repos\/octocat\/hello-world\/"/
+      );
+    });
+    child.stdin.write(errorLine);
+    t.tearDown(() => child.kill());
+  });
+
   t.test("LOG_FORMAT=json", (t) => {
     t.plan(1);
     const child = spawn(nodeBinaryPath, [cliPath], {
