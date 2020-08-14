@@ -7,7 +7,9 @@
   "description": "formats pino logs and sends errors to Sentry",
   "main": "index.js",
   "scripts": {
-    "test": "tap 'test/*.js'"
+    "test": "tap 'test/*.js'",
+    "lint": "prettier --check '**/*.js' '.github/**/*.yml' '*.md' package.json",
+    "lint:fix": "prettier --write '**/*.js' '.github/**/*.yml' '*.md' package.json"
   },
   "keywords": [
     "pino"
@@ -18,6 +20,7 @@
   "devDependencies": {
     "@types/pino": "^6.3.0",
     "pino": "^6.5.1",
+    "prettier": "^2.0.5",
     "semantic-release": "^17.1.1",
     "tap": "^14.10.8"
   },
