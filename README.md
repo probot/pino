@@ -1,10 +1,24 @@
 # `@probot/pino`
 
-> formats [pino](https://github.com/pinojs/pino) logs and sends them to [sentry](https://sentry.io)
+> formats [pino](https://github.com/pinojs/pino) logs and sends errors to [Sentry](https://sentry.io)
 
 ## About
 
 `@probot/pino` is currently built into `probot`, you don't need to manually pipe probot's logs into it. It will be easy to move it out of `probot` in future though, and give people a simple way to recover the logging behavior if they wish, or to replace it with another [pino transport](https://getpino.io/#/docs/transports)
+
+## Examples
+
+You can test `@probot/pino` by running the following in your terminal
+
+```
+node example | node cli.js
+```
+
+You can test the environment variables by setting them inline
+
+```
+node example | LOG_FORMAT=json node cli.js
+```
 
 ## Options
 
