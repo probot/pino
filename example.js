@@ -4,38 +4,10 @@ var pino = require("pino")({
   name: "probot",
 });
 
-// random logs
-pino.info("hello world");
-pino.error("this is at error level");
-pino.info("the answer is %d", 42);
-pino.info({ obj: 42 }, "hello world");
-pino.info({ obj: 42, b: 2 }, "hello world");
-pino.info({ obj2: { aa: "bbb" } }, "another");
-setImmediate(function () {
-  pino.info("after setImmediate");
-});
-pino.error(new Error("an error"));
+// simulate probot.log.info()
+pino.info("hello future");
 
-var child = pino.child({ a: "property" });
-child.info("hello child!");
-
-var childsChild = child.child({ another: "property" });
-childsChild.info("hello baby..");
-
-pino.debug("this should be mute");
-
-pino.level = "trace";
-
-pino.debug("this is a debug statement");
-
-pino
-  .child({ another: "property" })
-  .debug("this is a debug statement via child");
-pino.trace("this is a trace statement");
-
-pino.debug('this is a "debug" statement with "');
-
-// probot-specific logs
+// simulate a request error thrown in a webhook event handler
 const error = new Error("Oops");
 error.status = 500;
 error.event = {
@@ -56,3 +28,6 @@ error.request = {
   url: "https://api.github.com/repos/octocat/hello-world/",
 };
 pino.error(error);
+
+// simulate fatal error
+pino.fatal(new Error("Oh no!"));
