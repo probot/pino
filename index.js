@@ -6,12 +6,12 @@ const prettyFactory = require("pino-pretty");
 const Sentry = require("@sentry/node");
 
 const LEVEL_MAP = {
-  "10": "trace",
-  "20": "debug",
-  "30": "info",
-  "40": "warn",
-  "50": "error",
-  "60": "fatal",
+  10: "trace",
+  20: "debug",
+  30: "info",
+  40: "warn",
+  50: "error",
+  60: "fatal",
 };
 
 function getTransformStream() {
