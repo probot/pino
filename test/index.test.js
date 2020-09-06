@@ -11,7 +11,7 @@ test("API", (t) => {
   });
 
   t.test(
-    "ONly a single \\n is added to the end log lines when LOG_FORMAT is set to 'json' (https://github.com/probot/probot/issues/1334)",
+    "A single \\n is added to the end log lines when LOG_FORMAT is set to 'json' (https://github.com/probot/probot/issues/1334)",
     (t) => {
       process.env.LOG_FORMAT = "json";
 
