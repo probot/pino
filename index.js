@@ -4,6 +4,7 @@ const { Transform } = require("readable-stream");
 
 const prettyFactory = require("pino-pretty");
 const Sentry = require("@sentry/node");
+const { ExtraErrorData } = require("@sentry/integrations");
 
 const LEVEL_MAP = {
   "10": "trace",
@@ -22,6 +23,7 @@ function getTransformStream() {
   if (sentryEnabled) {
     Sentry.init({
       dsn: process.env.SENTRY_DSN,
+      integrations: [new ExtraErrorData({ depth: 10 })],
     });
   }
 
