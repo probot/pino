@@ -42,7 +42,7 @@ function getTransformStream() {
   return new Transform({
     objectMode: true,
     transform(chunk, enc, cb) {
-      const line = chunk.toString();
+      const line = chunk.toString().trim();
 
       /* istanbul ignore if */
       if (line === undefined) return cb();
@@ -73,7 +73,7 @@ function getTransformStream() {
         return cb(null, stringifyLogLevel(data || JSON.parse(line)));
       }
 
-      cb(null, chunk.toString() + "\n");
+      cb(null, line + "\n");
     },
   });
 }
