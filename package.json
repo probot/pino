@@ -25,6 +25,7 @@
     "tap": "^14.10.8"
   },
   "dependencies": {
+    "@sentry/integrations": "^5.22.3",
     "@sentry/node": "^5.21.1",
     "pino-pretty": "^4.1.0",
     "pump": "^3.0.0",
