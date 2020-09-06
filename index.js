@@ -63,6 +63,23 @@ function getTransformStream() {
             scope.setExtra(extra, data[extra]);
           }
 
+          // set user id and username when available
+          if (data.event && data.event.installation) {
+            const user = { id: data.event.installation.id };
+
+            /* istanbul ignore if */
+            if (data.event.organization) {
+              user.username = data.event.organization.user.login;
+            }
+
+            /* istanbul ignore if */
+            if (data.event.repository) {
+              user.username = data.event.repository.owner.login;
+            }
+
+            scope.setUser(user);
+          }
+
           Sentry.captureException(toSentryError(data));
         });
       }
