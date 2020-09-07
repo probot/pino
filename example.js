@@ -8,12 +8,16 @@ var pino = require("pino")({
 pino.info("hello future");
 
 // simulate a request error thrown in a webhook event handler
-const error = new Error("Oops");
+const error = new Error("Caught error");
 error.status = 500;
 error.event = {
-  event: "installation_repositories.added",
+  event: "pull_request",
   id: "123",
-  installation: 456,
+  payload: {
+    installation: {
+      id: "456"
+    },
+  }
 };
 error.headers = {
   "x-github-request-id": "789",
