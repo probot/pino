@@ -27,7 +27,7 @@
   "dependencies": {
     "@sentry/integrations": "^5.22.3",
     "@sentry/node": "^5.21.1",
-    "pino-pretty": "^4.1.0",
+    "pino-pretty": "^4.2.1",
     "pump": "^3.0.0",
     "readable-stream": "^3.6.0",
     "split2": "^3.1.1"
