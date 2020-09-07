@@ -19,18 +19,18 @@
   "repository": "https://github.com/probot/pino",
   "devDependencies": {
     "@types/pino": "^6.3.0",
-    "pino": "^6.5.1",
-    "prettier": "^2.0.5",
+    "pino": "^6.6.0",
+    "prettier": "^2.1.1",
     "semantic-release": "^17.1.1",
     "tap": "^14.10.8"
   },
   "dependencies": {
     "@sentry/integrations": "^5.22.3",
-    "@sentry/node": "^5.21.1",
+    "@sentry/node": "^5.22.3",
     "pino-pretty": "^4.2.1",
     "pump": "^3.0.0",
     "readable-stream": "^3.6.0",
-    "split2": "^3.1.1"
+    "split2": "^3.2.2"
   },
   "release": {
     "branches": [
