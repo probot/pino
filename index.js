@@ -64,17 +64,21 @@ function getTransformStream() {
           }
 
           // set user id and username when available
-          if (data.event && data.event.installation) {
-            const user = { id: data.event.installation.id };
+          if (
+            data.event &&
+            data.event.payload &&
+            data.event.payload.installation
+          ) {
+            const user = { id: data.event.payload.installation.id };
 
             /* istanbul ignore if */
-            if (data.event.organization) {
-              user.username = data.event.organization.user.login;
+            if (data.event.payload.organization) {
+              user.username = data.event.payload.organization.user.login;
             }
 
             /* istanbul ignore if */
-            if (data.event.repository) {
-              user.username = data.event.repository.owner.login;
+            if (data.event.payload.repository) {
+              user.username = data.event.payload.repository.owner.login;
             }
 
             scope.setUser(user);
