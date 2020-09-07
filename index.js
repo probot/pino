@@ -71,12 +71,10 @@ function getTransformStream() {
           ) {
             const user = { id: data.event.payload.installation.id };
 
-            /* istanbul ignore if */
             if (data.event.payload.organization) {
               user.username = data.event.payload.organization.user.login;
             }
 
-            /* istanbul ignore if */
             if (data.event.payload.repository) {
               user.username = data.event.payload.repository.owner.login;
             }
