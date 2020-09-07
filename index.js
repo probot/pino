@@ -24,7 +24,7 @@ function getTransformStream() {
       dsn: process.env.SENTRY_DSN,
       // See https://github.com/getsentry/sentry-javascript/issues/1964#issuecomment-688482615
       // 6 is enough to serialize the deepest property across all GitHub Event payloads
-      normalizeDepth: 6
+      normalizeDepth: 6,
     });
   }
 

@@ -15,9 +15,9 @@ error.event = {
   id: "123",
   payload: {
     installation: {
-      id: "456"
+      id: "456",
     },
-  }
+  },
 };
 error.headers = {
   "x-github-request-id": "789",
