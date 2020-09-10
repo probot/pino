@@ -64,23 +64,16 @@ function getTransformStream() {
             scope.setExtra(extra, data[extra]);
           }
 
-          // set user id and username when available
+          // set user id and username to installation ID and account login
           if (
             data.event &&
             data.event.payload &&
             data.event.payload.installation
           ) {
-            const user = { id: data.event.payload.installation.id };
-
-            if (data.event.payload.organization) {
-              user.username = data.event.payload.organization.user.login;
-            }
-
-            if (data.event.payload.repository) {
-              user.username = data.event.payload.repository.owner.login;
-            }
-
-            scope.setUser(user);
+            scope.setUser({
+              id: data.event.payload.installation.id,
+              username: data.event.payload.installation.account.login,
+            });
           }
 
           Sentry.captureException(toSentryError(data));
