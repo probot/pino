@@ -26,7 +26,7 @@ function getTransformStream() {
       // 6 is enough to serialize the deepest property across all GitHub Event payloads
       normalizeDepth: 6,
       environment: process.env.SENTRY_ENV,
-      debug: process.env.SENTRY_DEBUG === "1",
+      debug: process.env.SENTRY_DEBUG === "true",
       release: process.env.SENTRY_RELEASE,
     });
   }
