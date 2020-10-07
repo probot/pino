@@ -27,7 +27,7 @@ test("cli", (t) => {
       const child = spawn(nodeBinaryPath, [cliPath], { env });
       child.on("error", t.threw);
       child.stdout.on("data", (data) => {
-        t.is(data.toString(), `INFO  (probot): hello future\n`);
+        t.is(data.toString(), `INFO\t (probot): hello future\n`);
       });
       child.stdin.write(logLine);
       t.tearDown(() => child.kill());
@@ -128,7 +128,7 @@ test("cli", (t) => {
     });
     child.on("error", t.threw);
     child.stdout.on("data", (data) => {
-      t.match(data.toString(), /^ERROR \(probot\): Oops/);
+      t.match(data.toString(), /^ERROR\t \(probot\): Oops/);
     });
     child.stdin.write(errorLine);
 
@@ -169,7 +169,7 @@ test("cli", (t) => {
     });
     child.on("error", t.threw);
     child.stdout.on("data", (data) => {
-      t.match(data.toString(), /^FATAL \(probot\): Oh no!/);
+      t.match(data.toString(), /^FATAL\t \(probot\): Oh no!/);
     });
     child.stdin.write(fatalErrorLine);
 
