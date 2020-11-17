@@ -61,6 +61,11 @@ const log = pino(
 | `LOG_FORMAT`          | By default, logs are formatted for readability in development. You can set this to `json` in order to disable the formatting                                                                             |
 | `LOG_LEVEL_IN_STRING` | By default, when using the `json` format, the level printed in the log records is an int (`10`, `20`, ..). This option tells the logger to print level as a string: `{"level": "info"}`. Default `false` |
 | `SENTRY_DSN`          | Set to a [Sentry](https://sentry.io/) DSN to report all errors thrown by your app. <p>_(Example: `https://1234abcd@sentry.io/12345`)_</p>                                                                |
+| `SENTRY_ENV`          | Set the Sentry `environment` option. By default it's unset                                                                                                                                               |
+| `SENTRY_DEBUG`        | Set the Sentry `debug` flag (use `true` to activate). By default it's false                                                                                                                              |
+| `SENTRY_RELEASE`      | Set the Sentry `release` option. By default it's unset                                                                                                                                                   |
+
+For more information about the Sentry options see this [documentation](https://docs.sentry.io/platforms/node/configuration/options/)
 
 ## Contributing
 
