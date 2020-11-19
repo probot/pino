@@ -14,14 +14,14 @@ const LEVEL_MAP = {
   60: "fatal",
 };
 
-function getTransformStream() {
-  const formattingEnabled = process.env.LOG_FORMAT !== "json";
-  const levelAsString = process.env.LOG_LEVEL_IN_STRING === "true";
-  const sentryEnabled = !!process.env.SENTRY_DSN;
+function getTransformStream(options = {}) {
+  const formattingEnabled = options.logFormat !== "json";
+  const levelAsString = options.logLevelInString === "true";
+  const sentryEnabled = !!options.sentryDsn;
 
   if (sentryEnabled) {
     Sentry.init({
-      dsn: process.env.SENTRY_DSN,
+      dsn: options.sentryDsn,
       // See https://github.com/getsentry/sentry-javascript/issues/1964#issuecomment-688482615
       // 6 is enough to serialize the deepest property across all GitHub Event payloads
       normalizeDepth: 6,
