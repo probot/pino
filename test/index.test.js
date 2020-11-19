@@ -20,8 +20,9 @@ test("API", (t) => {
   });
 
   t.test("Sentry integation enabled", (t) => {
-    process.env.SENTRY_DSN = "http://username@example.com/1234";
-    const transform = getTransformStream();
+    const transform = getTransformStream({
+      sentryDsn: "http://username@example.com/1234",
+    });
     const log = pino({}, transform);
 
     function event(payload) {
@@ -94,8 +95,6 @@ test("API", (t) => {
   t.test(
     "A single \\n is added to the end log lines when LOG_FORMAT is set to 'json' (https://github.com/probot/probot/issues/1334)",
     (t) => {
-      process.env.LOG_FORMAT = "json";
-
       const streamLogsToOutput = new Stream.Writable({ objectMode: true });
       const output = [];
       streamLogsToOutput._write = (line, encoding, done) => {
@@ -103,7 +102,9 @@ test("API", (t) => {
         done();
       };
 
-      const transform = getTransformStream();
+      const transform = getTransformStream({
+        logFormat: "json",
+      });
       transform.pipe(streamLogsToOutput);
       const log = pino({}, transform);
 
