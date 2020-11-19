@@ -1,7 +1,9 @@
 import { Transform } from "readable-stream";
 
+export type LogLevel = "trace" | "debug" | "info" | "warn" | "error" | "fatal";
+
 export type Options = {
-  logFormat?: "trace" | "debug" | "info" | "warn" | "error" | "fatal";
+  logFormat?: "json";
   logLevelInString?: boolean;
   sentryDsn?: string;
 };
