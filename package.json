@@ -4,6 +4,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "bin": {
+    "pino-probot": "./cli.js"
+  },
   "description": "formats pino logs and sends errors to Sentry",
   "main": "index.js",
   "scripts": {
