@@ -6,18 +6,16 @@
 
 `@probot/pino` is currently built into `probot`, you don't need to manually pipe probot's logs into it. It will be easy to move it out of `probot` in future though, and give people a simple way to recover the logging behavior if they wish, or to replace it with another [pino transport](https://getpino.io/#/docs/transports)
 
-## Examples
-
-You can test `@probot/pino` by running the following in your terminal
+## CLI Usage
 
 ```
-node example | node cli.js
+node my-script.js | pino-probot
 ```
 
 You can test the environment variables by setting them inline
 
 ```
-node example | LOG_FORMAT=json node cli.js
+node my-script.js | LOG_FORMAT=json pino-probot
 ```
 
 ## Programmatic usage
@@ -52,15 +50,25 @@ const log = pino(
 );
 ```
 
-## Options
+With custom options:
 
-`@probot/pino` can be configured using environment variables
+```js
+const transform = getTransformStream({
+  logFormat: "json",
+  logLevelInString: true,
+  sentryDsn: "http://username@example.com/1234",
+});
+```
 
-| Variable              | Description                                                                                                                                                                                              |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `LOG_FORMAT`          | By default, logs are formatted for readability in development. You can set this to `json` in order to disable the formatting                                                                             |
-| `LOG_LEVEL_IN_STRING` | By default, when using the `json` format, the level printed in the log records is an int (`10`, `20`, ..). This option tells the logger to print level as a string: `{"level": "info"}`. Default `false` |
-| `SENTRY_DSN`          | Set to a [Sentry](https://sentry.io/) DSN to report all errors thrown by your app. <p>_(Example: `https://1234abcd@sentry.io/12345`)_</p>                                                                |
+### Options
+
+The `pino-probot` binary can be configured using environment variables, while the `getTransformStream()` accepts an object with according keys
+
+| Environment Varibale  | Option             | Description                                                                                                                                                                                              |
+| --------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `LOG_FORMAT`          | `logFormat`        | By default, logs are formatted for readability in development. You can set this to `json` in order to disable the formatting                                                                             |
+| `LOG_LEVEL_IN_STRING` | `logLevelInString` | By default, when using the `json` format, the level printed in the log records is an int (`10`, `20`, ..). This option tells the logger to print level as a string: `{"level": "info"}`. Default `false` |
+| `SENTRY_DSN`          | `sentryDsn`        | Set to a [Sentry](https://sentry.io/) DSN to report all errors thrown by your app. <p>_(Example: `https://1234abcd@sentry.io/12345`)_</p>                                                                |
 
 ## Contributing
 
