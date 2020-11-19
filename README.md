@@ -66,7 +66,7 @@ The `pino-probot` binary can be configured using environment variables, while th
 
 | Environment Varibale  | Option             | Description                                                                                                                                                                                              |
 | --------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `LOG_FORMAT`          | `logFormat`        | By default, logs are formatted for readability in development. You can set this to `json` in order to disable the formatting                                                                             |
+| `LOG_FORMAT`          | `logFormat`        | Set to `pretty` or `json`. When set to `pretty`, logs are formatted for human readability. Setting to `json` logs using JSON objects. Defaults to `pretty`                                               |
 | `LOG_LEVEL_IN_STRING` | `logLevelInString` | By default, when using the `json` format, the level printed in the log records is an int (`10`, `20`, ..). This option tells the logger to print level as a string: `{"level": "info"}`. Default `false` |
 | `SENTRY_DSN`          | `sentryDsn`        | Set to a [Sentry](https://sentry.io/) DSN to report all errors thrown by your app. <p>_(Example: `https://1234abcd@sentry.io/12345`)_</p>                                                                |
 
