@@ -14,6 +14,13 @@ const LEVEL_MAP = {
   60: "fatal",
 };
 
+/**
+ * Implements Probot's default logging formatting and error captionaing using Sentry.
+ *
+ * @param {import("./").Options} options
+ * @returns Transform
+ * @see https://getpino.io/#/docs/transports
+ */
 function getTransformStream(options = {}) {
   const formattingEnabled = options.logFormat !== "json";
   const levelAsString = options.logLevelInString === "true";

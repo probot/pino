@@ -9,6 +9,7 @@
   },
   "description": "formats pino logs and sends errors to Sentry",
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "test": "tap 'test/*.js'",
     "lint": "prettier --check '**/*.js' '.github/**/*.yml' '*.md' package.json",
