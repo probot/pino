@@ -78,7 +78,7 @@ test("cli", (t) => {
   });
 
   t.test("SENTRY_DSN", (t) => {
-    t.plan(4);
+    t.plan(5);
 
     const server = createServer((request, response) => {
       // we can access HTTP headers
@@ -128,7 +128,29 @@ test("cli", (t) => {
     });
     child.on("error", t.threw);
     child.stdout.on("data", (data) => {
-      t.match(data.toString(), /^ERROR\t \(probot\): Oops/);
+      const errorStringLines = data.toString().split(/\n/);
+      t.equal(errorStringLines[0].trim(), "ERROR\t (probot): Oops");
+
+      // skip the error stack, normalize Sentry Event ID, compare error details only
+      t.equal(
+        errorStringLines
+          .slice(9)
+          .join("\n")
+          .trim()
+          .replace(/sentryEventId: \w+$/, "sentryEventId: 123"),
+        `event: {
+    id: "123"
+}
+status: 500
+headers: {
+    x-github-request-id: "789"
+}
+request: {
+    method: "GET"
+    url: "https://api.github.com/repos/octocat/hello-world/"
+}
+sentryEventId: 123`
+      );
     });
     child.stdin.write(errorLine);
 
@@ -139,7 +161,6 @@ test("cli", (t) => {
     t.plan(3);
 
     const server = createServer((request, response) => {
-      // we can access HTTP headers
       let body = "";
       request.on("data", (chunk) => {
         body += chunk.toString();
