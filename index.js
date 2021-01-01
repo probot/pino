@@ -46,7 +46,9 @@ function getTransformStream(options = {}) {
       "res",
       "responseTime",
     ].join(","),
-    errorProps: ["event", "status", "headers", "request"].join(","),
+    errorProps: ["event", "status", "headers", "request", "sentryEventId"].join(
+      ","
+    ),
   });
 
   return new Transform({
@@ -59,49 +61,72 @@ function getTransformStream(options = {}) {
 
       const data = sentryEnabled ? JSON.parse(line) : null;
 
-      if (sentryEnabled && data.level >= 50) {
-        Sentry.withScope(function (scope) {
-          const sentryLevelName =
-            data.level === 50 ? Sentry.Severity.Error : Sentry.Severity.Fatal;
-          scope.setLevel(sentryLevelName);
+      if (!sentryEnabled || data.level < 50) {
+        if (formattingEnabled) {
+          return cb(null, pretty(line));
+        }
 
-          for (const extra of ["event", "headers", "request", "status"]) {
-            if (!data[extra]) continue;
+        if (levelAsString) {
+          return cb(null, stringifyLogLevel(JSON.parse(line)));
+        }
 
-            scope.setExtra(extra, data[extra]);
-          }
-
-          // set user id and username to installation ID and account login
-          if (data.event && data.event.payload) {
-            const {
-              // When GitHub App is installed organization wide
-              installation: { id, account: { login: account } = {} } = {},
-
-              // When the repository belongs to an organization
-              organization: { login: organization } = {},
-              // When the repository belongs to a user
-              repository: { owner: { login: owner } = {} } = {},
-            } = data.event.payload;
-
-            scope.setUser({
-              id: id,
-              username: account || organization || owner,
-            });
-          }
-
-          Sentry.captureException(toSentryError(data));
-        });
+        cb(null, line + "\n");
+        return;
       }
 
-      if (formattingEnabled) {
-        return cb(null, pretty(data || line));
-      }
+      Sentry.withScope(function (scope) {
+        const sentryLevelName =
+          data.level === 50 ? Sentry.Severity.Error : Sentry.Severity.Fatal;
+        scope.setLevel(sentryLevelName);
 
-      if (levelAsString) {
-        return cb(null, stringifyLogLevel(data || JSON.parse(line)));
-      }
+        for (const extra of ["event", "headers", "request", "status"]) {
+          if (!data[extra]) continue;
 
-      cb(null, line + "\n");
+          scope.setExtra(extra, data[extra]);
+        }
+
+        // set user id and username to installation ID and account login
+        if (data.event && data.event.payload) {
+          const {
+            // When GitHub App is installed organization wide
+            installation: { id, account: { login: account } = {} } = {},
+
+            // When the repository belongs to an organization
+            organization: { login: organization } = {},
+            // When the repository belongs to a user
+            repository: { owner: { login: owner } = {} } = {},
+          } = data.event.payload;
+
+          scope.setUser({
+            id: id,
+            username: account || organization || owner,
+          });
+        }
+
+        const sentryEventId = Sentry.captureException(toSentryError(data));
+
+        // reduce logging data and add reference to sentry event instead
+        if (data.event) {
+          data.event = { id: data.event.id };
+        }
+        if (data.request) {
+          data.request = {
+            method: data.request.method,
+            url: data.request.url,
+          };
+        }
+        data.sentryEventId = sentryEventId;
+
+        if (formattingEnabled) {
+          return cb(null, pretty(data));
+        }
+
+        if (levelAsString) {
+          return cb(null, stringifyLogLevel(data));
+        }
+
+        cb(null, JSON.stringify(data) + "\n");
+      });
     },
   });
 }
