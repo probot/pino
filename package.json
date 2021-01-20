@@ -29,7 +29,7 @@
     "tap": "^14.10.8"
   },
   "dependencies": {
-    "@sentry/node": "^5.22.3",
+    "@sentry/node": "^6.0.0",
     "pino-pretty": "^4.2.1",
     "pump": "^3.0.0",
     "readable-stream": "^3.6.0",
