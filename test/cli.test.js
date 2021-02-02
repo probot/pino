@@ -27,7 +27,7 @@ test("cli", (t) => {
       const child = spawn(nodeBinaryPath, [cliPath], { env });
       child.on("error", t.threw);
       child.stdout.on("data", (data) => {
-        t.is(data.toString(), `INFO\t (probot): hello future\n`);
+        t.is(data.toString(), `INFO (probot): hello future\n`);
       });
       child.stdin.write(logLine);
       t.tearDown(() => child.kill());
@@ -129,7 +129,7 @@ test("cli", (t) => {
     child.on("error", t.threw);
     child.stdout.on("data", (data) => {
       const errorStringLines = data.toString().split(/\n/);
-      t.equal(errorStringLines[0].trim(), "ERROR\t (probot): Oops");
+      t.equal(errorStringLines[0].trim(), "ERROR (probot): Oops");
 
       // skip the error stack, normalize Sentry Event ID, compare error details only
       t.equal(
@@ -190,7 +190,7 @@ sentryEventId: 123`
     });
     child.on("error", t.threw);
     child.stdout.on("data", (data) => {
-      t.match(data.toString(), /^FATAL\t \(probot\): Oh no!/);
+      t.match(data.toString(), /^FATAL \(probot\): Oh no!\n/);
     });
     child.stdin.write(fatalErrorLine);
 
