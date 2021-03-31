@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/node";
+const Sentry = require("@sentry/node");
 
 const Stream = require("stream");
 
@@ -9,13 +9,12 @@ const { getTransformStream } = require("..");
 test("API", (t) => {
   let env = Object.assign({}, process.env);
 
-  t.afterEach((done, t) => {
+  t.afterEach(() => {
     process.env = Object.assign({}, env);
-    done();
   });
 
   t.test("getTransformStream export", (t) => {
-    t.isA(getTransformStream, Function);
+    t.type(getTransformStream, Function);
     t.end();
   });
 
@@ -46,7 +45,7 @@ test("API", (t) => {
 
       Sentry.withScope(function (scope) {
         scope.addEventProcessor(function (event, hint) {
-          t.strictDeepEquals(event.user, { id: "456", username: undefined });
+          t.strictSame(event.user, { id: "456", username: undefined });
         });
 
         log.fatal(event({}));
