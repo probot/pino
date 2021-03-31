@@ -11,6 +11,7 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
+    "coverage": "tap --coverage-report html",
     "test": "tap 'test/*.js'",
     "lint": "prettier --check '**/*.js' '.github/**/*.yml' '*.md' package.json",
     "lint:fix": "prettier --write '**/*.js' '.github/**/*.yml' '*.md' package.json"
