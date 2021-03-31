@@ -23,6 +23,7 @@ const LEVEL_MAP = {
  */
 function getTransformStream(options = {}) {
   const formattingEnabled = options.logFormat !== "json";
+
   const levelAsString = options.logLevelInString === "true";
   const sentryEnabled = !!options.sentryDsn;
 
@@ -121,6 +122,7 @@ function getTransformStream(options = {}) {
           return cb(null, pretty(data));
         }
 
+        // istanbul ignore if
         if (levelAsString) {
           return cb(null, stringifyLogLevel(data));
         }

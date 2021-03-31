@@ -18,6 +18,11 @@ test("API", (t) => {
     t.end();
   });
 
+  t.test("getTransformStream without options", (t) => {
+    getTransformStream();
+    t.end();
+  });
+
   t.test("Sentry integation enabled", (t) => {
     const transform = getTransformStream({
       sentryDsn: "http://username@example.com/1234",
@@ -78,6 +83,41 @@ test("API", (t) => {
 
     t.test("with repository owner", (t) => {
       t.plan(1);
+
+      Sentry.withScope(function (scope) {
+        scope.addEventProcessor(function (event, hint) {
+          t.match(event.user, { username: "owner" });
+        });
+
+        log.fatal(event({ repository: { owner: { login: "owner" } } }));
+      });
+    });
+
+    t.test("with repository owner and without installation", (t) => {
+      t.plan(1);
+
+      Sentry.withScope(function (scope) {
+        scope.addEventProcessor(function (event, hint) {
+          t.match(event.user, { username: "owner" });
+        });
+
+        log.fatal(
+          event({
+            installation: undefined,
+            repository: { owner: { login: "owner" } },
+          })
+        );
+      });
+    });
+
+    t.test("with logFormat: json", (t) => {
+      t.plan(1);
+
+      const transform = getTransformStream({
+        sentryDsn: "http://username@example.com/1234",
+        logFormat: "json",
+      });
+      const log = pino({}, transform);
 
       Sentry.withScope(function (scope) {
         scope.addEventProcessor(function (event, hint) {
