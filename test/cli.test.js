@@ -27,10 +27,10 @@ test("cli", (t) => {
       const child = spawn(nodeBinaryPath, [cliPath], { env });
       child.on("error", t.threw);
       child.stdout.on("data", (data) => {
-        t.is(data.toString(), `INFO (probot): hello future\n`);
+        t.equal(data.toString(), `INFO (probot): hello future\n`);
       });
       child.stdin.write(logLine);
-      t.tearDown(() => child.kill());
+      t.teardown(() => child.kill());
     }
   );
 
@@ -48,7 +48,7 @@ test("cli", (t) => {
       );
     });
     child.stdin.write(errorLine);
-    t.tearDown(() => child.kill());
+    t.teardown(() => child.kill());
   });
 
   t.test("LOG_FORMAT=json", (t) => {
@@ -58,10 +58,10 @@ test("cli", (t) => {
     });
     child.on("error", t.threw);
     child.stdout.on("data", (data) => {
-      t.is(data.toString(), logLine);
+      t.equal(data.toString(), logLine);
     });
     child.stdin.write(logLine);
-    t.tearDown(() => child.kill());
+    t.teardown(() => child.kill());
   });
 
   t.test("LOG_LEVEL_IN_STRING=true", (t) => {
@@ -71,10 +71,10 @@ test("cli", (t) => {
     });
     child.on("error", t.threw);
     child.stdout.on("data", (data) => {
-      t.is(data.toString(), logLine.replace('"level":30', '"level":"info"'));
+      t.equal(data.toString(), logLine.replace('"level":30', '"level":"info"'));
     });
     child.stdin.write(logLine);
-    t.tearDown(() => child.kill());
+    t.teardown(() => child.kill());
   });
 
   t.test("SENTRY_DSN", (t) => {
@@ -90,9 +90,9 @@ test("cli", (t) => {
         const data = JSON.parse(body);
         const error = data.exception.values[0];
 
-        t.is(error.type, "Error");
-        t.is(error.value, "Oops");
-        t.strictDeepEqual(data.extra, {
+        t.equal(error.type, "Error");
+        t.equal(error.value, "Oops");
+        t.strictSame(data.extra, {
           event: {
             event: "installation_repositories.added",
             id: "123",
@@ -154,7 +154,7 @@ sentryEventId: 123`
     });
     child.stdin.write(errorLine);
 
-    t.tearDown(() => child.kill());
+    t.teardown(() => child.kill());
   });
 
   t.test("SENTRY_DSN with fatal error", (t) => {
@@ -169,8 +169,8 @@ sentryEventId: 123`
         const data = JSON.parse(body);
         const error = data.exception.values[0];
 
-        t.is(error.type, "Error");
-        t.is(error.value, "Oh no!");
+        t.equal(error.type, "Error");
+        t.equal(error.value, "Oh no!");
 
         server.close(t.end);
       });
@@ -194,7 +194,7 @@ sentryEventId: 123`
     });
     child.stdin.write(fatalErrorLine);
 
-    t.tearDown(() => child.kill());
+    t.teardown(() => child.kill());
   });
 
   t.end();

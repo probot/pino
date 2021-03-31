@@ -11,6 +11,7 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
+    "coverage": "tap --coverage-report html",
     "test": "tap 'test/*.js'",
     "lint": "prettier --check '**/*.js' '.github/**/*.yml' '*.md' package.json",
     "lint:fix": "prettier --write '**/*.js' '.github/**/*.yml' '*.md' package.json"
@@ -26,7 +27,7 @@
     "pino": "^6.6.0",
     "prettier": "^2.1.1",
     "semantic-release": "^17.1.1",
-    "tap": "^14.10.8"
+    "tap": "^15.0.0"
   },
   "dependencies": {
     "@sentry/node": "^6.0.0",
