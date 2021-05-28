@@ -143,6 +143,7 @@ test("API", (t) => {
 
       const transform = getTransformStream({
         logFormat: "json",
+        logLevelInString: true,
       });
       transform.pipe(streamLogsToOutput);
       const log = pino({}, transform);
@@ -154,6 +155,8 @@ test("API", (t) => {
         output.join("").trim() + "\n",
         'No "\\n" is added to end of line'
       );
+
+      t.equal(JSON.parse(output).level, "info");
 
       t.end();
     }
