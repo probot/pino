@@ -24,7 +24,7 @@ const LEVEL_MAP = {
 function getTransformStream(options = {}) {
   const formattingEnabled = options.logFormat !== "json";
 
-  const levelAsString = options.logLevelInString === "true";
+  const levelAsString = options.logLevelInString;
   const sentryEnabled = !!options.sentryDsn;
 
   if (sentryEnabled) {
