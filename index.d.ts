@@ -9,3 +9,4 @@ export type Options = {
 };
 
 export function getTransformStream(options?: Options): Transform;
+export default getTransformStream;

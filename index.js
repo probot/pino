@@ -1,4 +1,4 @@
-module.exports = { getTransformStream };
+module.exports = getTransformStream;
 
 const { Transform } = require("readable-stream");
 const { isMainThread } = require('worker_threads');

@@ -1,6 +1,6 @@
 const pump = require("pump");
 
-const { getTransformStream } = require("./");
+const getTransformStream = require("./");
 
 const options = {
   logFormat: process.env.LOG_FORMAT,

@@ -2,7 +2,7 @@
 
 const pino = require("pino")({
   transport: {
-    target: 'pino-pretty'
+    target: './index.js'
   },
 });
 
