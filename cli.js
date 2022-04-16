@@ -1,5 +1,4 @@
 const pump = require("pump");
-const split = require("split2");
 
 const { getTransformStream } = require("./");
 
@@ -9,4 +8,5 @@ const options = {
   sentryDsn: process.env.SENTRY_DSN,
 };
 
-pump(process.stdin, split(), getTransformStream(options), process.stdout);
+const res = getTransformStream(opts)
+pump(process.stdin, res)

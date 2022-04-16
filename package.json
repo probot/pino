@@ -30,9 +30,11 @@
   },
   "dependencies": {
     "@sentry/node": "^6.0.0",
+    "pino-abstract-transport": "^0.5.0",
     "pino-pretty": "^7.0.0",
     "pump": "^3.0.0",
     "readable-stream": "^3.6.0",
+    "sonic-boom": "^2.7.0",
     "split2": "^4.0.0"
   },
   "release": {
