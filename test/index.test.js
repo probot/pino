@@ -4,7 +4,7 @@ const Stream = require("stream");
 
 const test = require("tap").test;
 const pino = require("pino");
-const { getTransformStream } = require("..");
+const getTransformStream = require("..");
 
 test("API", (t) => {
   let env = Object.assign({}, process.env);
