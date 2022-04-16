@@ -1,7 +1,9 @@
 "use strict";
 
-var pino = require("pino")({
-  name: "probot",
+const pino = require("pino")({
+  transport: {
+    target: 'pino-pretty'
+  },
 });
 
 // simulate probot.log.info()
