@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@sentry/node": "^6.0.0",
-    "pino-pretty": "^6.0.0",
+    "pino-pretty": "^8.1.0",
     "pump": "^3.0.0",
     "readable-stream": "^3.6.0",
     "split2": "^4.0.0"
