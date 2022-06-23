@@ -24,7 +24,7 @@
   "repository": "github:probot/pino",
   "devDependencies": {
     "@types/pino": "^7.0.5",
-    "pino": "^6.6.0",
+    "pino": "^8.1.0",
     "prettier": "^2.1.1",
     "tap": "^16.0.1"
   },
