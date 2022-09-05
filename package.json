@@ -39,5 +39,10 @@
     "branches": [
       "main"
     ]
+  },
+  "renovate": {
+    "extends": [
+      "github>octokit/.github"
+    ]
   }
 }
