@@ -1,15 +1,12 @@
 name: Test
-"on":
+on:
   push:
     branches:
       - main
-      - dependabot/npm_and_yarn/**
   pull_request:
-    types:
-      - opened
-      - synchronize
+
 jobs:
-  test_matrix:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -26,14 +23,13 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx tap 'test/*.js'
-  test:
+  lint:
     runs-on: ubuntu-latest
-    needs: test_matrix
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           cache: npm
-          node-version: 16
+          node-version: 22
       - run: npm ci
       - run: npm run lint
