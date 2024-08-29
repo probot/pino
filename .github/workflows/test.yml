@@ -122,7 +122,7 @@ jobs:
       - test-unit
     steps:
       - run: exit 1
-        if: ${{ needs.test-unit.result != 'success' || needs.test-redis.result != 'success' }}
+        if: ${{ needs.test-unit.result != 'success' }}
       - run: exit 0
-        if: ${{ needs.test-unit.result == 'success' || needs.test-redis.result == 'success' }}
+        if: ${{ needs.test-unit.result == 'success' }}
     if: ${{ always() }}
