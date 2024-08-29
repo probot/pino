@@ -116,3 +116,9 @@ jobs:
         run: npm ci
       - name: Test
         run: npm run test
+
+
+  test:
+    runs-on: ubuntu-latest
+    needs:
+      - test-unit
