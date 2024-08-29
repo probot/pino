@@ -35,11 +35,6 @@
     "pump": "^3.0.0",
     "split2": "^4.0.0"
   },
-  "release": {
-    "branches": [
-      "main"
-    ]
-  },
   "engines": {
     "node": ">=18"
   }
