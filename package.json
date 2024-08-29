@@ -2,7 +2,8 @@
   "name": "@probot/pino",
   "version": "0.0.0-development",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "bin": {
     "pino-probot": "./cli.js"
