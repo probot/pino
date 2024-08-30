@@ -75,7 +75,7 @@ function getTransformStream(options = {}) {
         return;
       }
 
-      withScope(function (scope) {
+      withScope((scope) => {
         scope.setLevel(data.level === 50 ? "error" : "fatal");
 
         if (data.event) {
@@ -150,5 +150,6 @@ function toSentryError(data) {
   return error;
 }
 
-module.exports = { getTransformStream };
+module.exports = getTransformStream;
 module.exports.default = module.exports;
+module.exports.getTransformStream = getTransformStream;
