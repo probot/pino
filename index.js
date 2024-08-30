@@ -1,9 +1,9 @@
-module.exports = { getTransformStream };
+'use strict';
 
 const { Transform } = require("node:stream");
 
-const prettyFactory = require("pino-pretty");
-const Sentry = require("@sentry/node");
+const { prettyFactory } = require("pino-pretty");
+const { init, withScope, captureException } = require("@sentry/node");
 
 const LEVEL_MAP = {
   10: "trace",
@@ -15,7 +15,7 @@ const LEVEL_MAP = {
 };
 
 /**
- * Implements Probot's default logging formatting and error captionaing using Sentry.
+ * Implements Probot's default logging formatting and error captioning using Sentry.
  *
  * @param {import("./").Options} options
  * @returns Transform
@@ -28,7 +28,7 @@ function getTransformStream(options = {}) {
   const sentryEnabled = !!options.sentryDsn;
 
   if (sentryEnabled) {
-    Sentry.init({
+    init({
       dsn: options.sentryDsn,
       // See https://github.com/getsentry/sentry-javascript/issues/1964#issuecomment-688482615
       // 6 is enough to serialize the deepest property across all GitHub Event payloads
@@ -75,19 +75,24 @@ function getTransformStream(options = {}) {
         return;
       }
 
-      Sentry.withScope(function (scope) {
-        const sentryLevelName =
-          data.level === 50 ? Sentry.Severity.Error : Sentry.Severity.Fatal;
-        scope.setLevel(sentryLevelName);
+      withScope(function (scope) {
+        scope.setLevel(data.level === 50 ? 'error' : 'fatal');
 
-        for (const extra of ["event", "headers", "request", "status"]) {
-          if (!data[extra]) continue;
-
-          scope.setExtra(extra, data[extra]);
+        if (data.event) {
+          scope.setExtra('event', data.event);
+        }
+        if (data.headers) {
+          scope.setExtra('headers', data.headers);
+        }
+        if (data.request) {
+          scope.setExtra('request', data.request);
+        }
+        if (data.status) {
+          scope.setExtra('status', data.status);
         }
 
         // set user id and username to installation ID and account login
-        if (data.event && data.event.payload) {
+        if (data.event?.payload) {
           const {
             // When GitHub App is installed organization wide
             installation: { id, account: { login: account } = {} } = {},
@@ -99,12 +104,12 @@ function getTransformStream(options = {}) {
           } = data.event.payload;
 
           scope.setUser({
-            id: id,
+            id,
             username: account || organization || owner,
           });
         }
 
-        const sentryEventId = Sentry.captureException(toSentryError(data));
+        const sentryEventId = captureException(toSentryError(data));
 
         // reduce logging data and add reference to sentry event instead
         if (data.event) {
@@ -144,3 +149,6 @@ function toSentryError(data) {
   error.stack = data.stack;
   return error;
 }
+
+module.exports = { getTransformStream };
+module.exports.default = module.exports;

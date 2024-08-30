@@ -1,10 +1,9 @@
-const path = require("path");
-const spawn = require("child_process").spawn;
-const { createServer } = require("http");
+const { join: pathJoin } = require("node:path");
+const { spawn } = require("node:child_process");
+const { createServer } = require("node:http");
+const { test } = require("tap");
 
-const test = require("tap").test;
-
-const cliPath = require.resolve(path.join(__dirname, "..", "cli.js"));
+const cliPath = require.resolve(pathJoin(__dirname, "..", "bin", "cli.js"));
 const nodeBinaryPath = process.argv[0];
 
 const logLine =
@@ -102,7 +101,7 @@ test("cli", (t) => {
         body += chunk.toString();
       });
       request.on("end", () => {
-        const data = JSON.parse(body);
+        const data = JSON.parse(body.split("\n")[2]);
         const error = data.exception.values[0];
 
         t.equal(error.type, "Error");
@@ -157,17 +156,17 @@ test("cli", (t) => {
           .trim()
           .replace(/sentryEventId: \w+$/, "sentryEventId: 123"),
         `event: {
-    id: "123"
-}
-status: 500
-headers: {
-    x-github-request-id: "789"
-}
-request: {
-    method: "GET"
-    url: "https://api.github.com/repos/octocat/hello-world/"
-}
-sentryEventId: 123`
+        id: "123"
+    }
+    status: 500
+    headers: {
+        x-github-request-id: "789"
+    }
+    request: {
+        method: "GET"
+        url: "https://api.github.com/repos/octocat/hello-world/"
+    }
+    sentryEventId: 123`
       );
     });
     child.stdin.write(errorLine);
@@ -184,7 +183,7 @@ sentryEventId: 123`
         body += chunk.toString();
       });
       request.on("end", () => {
-        const data = JSON.parse(body);
+        const data = JSON.parse(body.split("\n")[2]);
         const error = data.exception.values[0];
 
         t.equal(error.type, "Error");

@@ -6,7 +6,7 @@
     "provenance": true
   },
   "bin": {
-    "pino-probot": "./cli.js"
+    "pino-probot": "./bin/cli.js"
   },
   "description": "formats pino logs and sends errors to Sentry",
   "main": "index.js",
@@ -25,13 +25,13 @@
   "repository": "github:probot/pino",
   "devDependencies": {
     "@types/pino": "^7.0.5",
-    "pino": "^6.6.0",
+    "pino": "^9.3.2",
     "prettier": "^2.1.1",
     "tap": "^16.0.1"
   },
   "dependencies": {
-    "@sentry/node": "^6.0.0",
-    "pino-pretty": "^6.0.0",
+    "@sentry/node": "^8.0.0",
+    "pino-pretty": "^11.2.2",
     "pump": "^3.0.0",
     "split2": "^4.0.0"
   },

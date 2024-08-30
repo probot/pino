@@ -1,16 +1,15 @@
-const Sentry = require("@sentry/node");
+const { withScope } = require("@sentry/node");
+const { Writable } = require("stream");
 
-const Stream = require("stream");
-
-const test = require("tap").test;
-const pino = require("pino");
+const { test } = require("tap");
+const { pino } = require("pino");
 const { getTransformStream } = require("..");
 
 test("API", (t) => {
   let env = Object.assign({}, process.env);
 
   t.afterEach(() => {
-    process.env = Object.assign({}, env);
+    process.env = { ...env };
   });
 
   t.test("getTransformStream export", (t) => {
@@ -48,9 +47,9 @@ test("API", (t) => {
     t.test("without user", (t) => {
       t.plan(1);
 
-      Sentry.withScope(function (scope) {
+      withScope(function (scope) {
         scope.addEventProcessor(function (event, hint) {
-          t.strictSame(event.user, { id: "456", username: undefined });
+          t.strictSame(event.user, { id: "456" });
         });
 
         log.fatal(event({}));
@@ -60,7 +59,7 @@ test("API", (t) => {
     t.test("with organization", (t) => {
       t.plan(1);
 
-      Sentry.withScope(function (scope) {
+      withScope(function (scope) {
         scope.addEventProcessor(function (event, hint) {
           t.match(event.user, { username: "org" });
         });
@@ -72,7 +71,7 @@ test("API", (t) => {
     t.test("with installation account", (t) => {
       t.plan(1);
 
-      Sentry.withScope(function (scope) {
+      withScope(function (scope) {
         scope.addEventProcessor(function (event, hint) {
           t.match(event.user, { username: "account" });
         });
@@ -84,7 +83,7 @@ test("API", (t) => {
     t.test("with repository owner", (t) => {
       t.plan(1);
 
-      Sentry.withScope(function (scope) {
+      withScope(function (scope) {
         scope.addEventProcessor(function (event, hint) {
           t.match(event.user, { username: "owner" });
         });
@@ -96,7 +95,7 @@ test("API", (t) => {
     t.test("with repository owner and without installation", (t) => {
       t.plan(1);
 
-      Sentry.withScope(function (scope) {
+      withScope(function (scope) {
         scope.addEventProcessor(function (event, hint) {
           t.match(event.user, { username: "owner" });
         });
@@ -119,7 +118,7 @@ test("API", (t) => {
       });
       const log = pino({}, transform);
 
-      Sentry.withScope(function (scope) {
+      withScope(function (scope) {
         scope.addEventProcessor(function (event, hint) {
           t.match(event.user, { username: "owner" });
         });
@@ -134,7 +133,7 @@ test("API", (t) => {
   t.test(
     "A single \\n is added to the end log lines when LOG_FORMAT is set to 'json' (https://github.com/probot/probot/issues/1334)",
     (t) => {
-      const streamLogsToOutput = new Stream.Writable({ objectMode: true });
+      const streamLogsToOutput = new Writable({ objectMode: true });
       const output = [];
       streamLogsToOutput._write = (line, encoding, done) => {
         output.push(line);
