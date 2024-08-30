@@ -124,7 +124,7 @@ test("cli", (t) => {
           },
           status: 500,
         });
-        server.close(t.end);
+        server.close(() => t.end());
       });
 
       response.writeHead(200);
@@ -189,7 +189,7 @@ test("cli", (t) => {
         t.equal(error.type, "Error");
         t.equal(error.value, "Oh no!");
 
-        server.close(t.end);
+        server.close(() => t.end());
       });
 
       response.writeHead(200);
