@@ -1,3 +1,5 @@
+"use strict";
+
 const { withScope } = require("@sentry/node");
 const { Writable } = require("stream");
 
@@ -22,7 +24,7 @@ test("API", (t) => {
     t.end();
   });
 
-  t.test("Sentry integation enabled", (t) => {
+  t.test("Sentry integration enabled", (t) => {
     const transform = getTransformStream({
       sentryDsn: "http://username@example.com/1234",
     });

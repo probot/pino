@@ -1,3 +1,5 @@
+"use strict";
+
 const { join: pathJoin } = require("node:path");
 const { spawn } = require("node:child_process");
 const { createServer } = require("node:http");

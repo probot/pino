@@ -1,4 +1,4 @@
-import { Transform } from "readable-stream";
+import { Transform } from "node:stream";
 
 export type LogLevel = "trace" | "debug" | "info" | "warn" | "error" | "fatal";
 
