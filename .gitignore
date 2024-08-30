@@ -1,4 +1,4 @@
-.tap/
-.nyc_output/
+.nyc_output
+.tap
 coverage
 node_modules
