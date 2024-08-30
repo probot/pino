@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const { Transform } = require("node:stream");
 
@@ -48,7 +48,7 @@ function getTransformStream(options = {}) {
       "responseTime",
     ].join(","),
     errorProps: ["event", "status", "headers", "request", "sentryEventId"].join(
-      ","
+      ",",
     ),
   });
 
@@ -76,19 +76,19 @@ function getTransformStream(options = {}) {
       }
 
       withScope(function (scope) {
-        scope.setLevel(data.level === 50 ? 'error' : 'fatal');
+        scope.setLevel(data.level === 50 ? "error" : "fatal");
 
         if (data.event) {
-          scope.setExtra('event', data.event);
+          scope.setExtra("event", data.event);
         }
         if (data.headers) {
-          scope.setExtra('headers', data.headers);
+          scope.setExtra("headers", data.headers);
         }
         if (data.request) {
-          scope.setExtra('request', data.request);
+          scope.setExtra("request", data.request);
         }
         if (data.status) {
-          scope.setExtra('status', data.status);
+          scope.setExtra("status", data.status);
         }
 
         // set user id and username to installation ID and account login

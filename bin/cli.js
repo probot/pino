@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const pump = require("pump");
 const split = require("split2");

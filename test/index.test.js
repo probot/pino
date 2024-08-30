@@ -38,7 +38,7 @@ test("API", (t) => {
               id: "456",
             },
           },
-          payload
+          payload,
         ),
       };
       return error;
@@ -104,7 +104,7 @@ test("API", (t) => {
           event({
             installation: undefined,
             repository: { owner: { login: "owner" } },
-          })
+          }),
         );
       });
     });
@@ -152,13 +152,13 @@ test("API", (t) => {
       t.equal(
         output.join(""),
         output.join("").trim() + "\n",
-        'No "\\n" is added to end of line'
+        'No "\\n" is added to end of line',
       );
 
       t.equal(JSON.parse(output).level, "info");
 
       t.end();
-    }
+    },
   );
 
   t.end();

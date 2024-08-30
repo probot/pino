@@ -30,7 +30,7 @@ const log = pino(
   {
     name: "probot",
   },
-  getTransformStream()
+  getTransformStream(),
 );
 ```
 
@@ -46,7 +46,7 @@ const log = pino(
   {
     name: "probot",
   },
-  transform
+  transform,
 );
 ```
 
