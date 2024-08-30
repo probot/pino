@@ -35,13 +35,13 @@ test("API", (t) => {
       error.level = 50;
       Object.assign(
         error,
-          {
-            installation: {
-              id: "456",
-            },
+        {
+          installation: {
+            id: "456",
           },
-          payload,
-        );
+        },
+        payload,
+      );
       return error;
     }
 
