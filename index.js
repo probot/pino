@@ -101,7 +101,7 @@ function getTransformStream(options = {}) {
         }
 
         // set user id and username to installation ID and account login
-        if (data.err) {
+        if (data.err.event.payload) {
           const {
             // When GitHub App is installed organization wide
             installation: { id, account: { login: account } = {} } = {},
@@ -110,7 +110,7 @@ function getTransformStream(options = {}) {
             organization: { login: organization } = {},
             // When the repository belongs to a user
             repository: { owner: { login: owner } = {} } = {},
-          } = data.err;
+          } = data.err.event.payload;
 
           scope.setUser({
             id,

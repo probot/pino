@@ -33,15 +33,16 @@ test("API", (t) => {
     function event(payload) {
       const error = new Error("Hello from the test");
       error.level = 50;
-      Object.assign(
-        error,
-        {
-          installation: {
-            id: "456",
+      error.event = {
+        payload: Object.assign(
+          {
+            installation: {
+              id: "456",
+            },
           },
-        },
-        payload,
-      );
+          payload,
+        ),
+      };
       return error;
     }
 
