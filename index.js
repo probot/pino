@@ -65,8 +65,9 @@ function getTransformStream(options = {}) {
     transform(chunk, enc, cb) {
       const line = chunk.toString().trim();
 
-      /* istanbul ignore if */
+      /* c8 ignore start */
       if (line === undefined) return cb();
+      /* c8 ignore stop */
 
       const data = sentryEnabled ? JSON.parse(line) : null;
 
@@ -135,10 +136,11 @@ function getTransformStream(options = {}) {
           return cb(null, pretty(data));
         }
 
-        // istanbul ignore if
+        /* c8 ignore start */
         if (levelAsString) {
           return cb(null, stringifyLogLevel(data));
         }
+        /* c8 ignore stop */
 
         cb(null, JSON.stringify(data) + "\n");
       });
