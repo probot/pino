@@ -14,6 +14,25 @@ const LEVEL_MAP = {
   60: "fatal",
 };
 
+const pinoIgnore = [
+  // default pino keys
+  "time",
+  "pid",
+  "hostname",
+  // remove keys from pino-http
+  "req",
+  "res",
+  "responseTime",
+].join(",");
+
+const pinoErrorProps = [
+  "event",
+  "status",
+  "headers",
+  "request",
+  "sentryEventId",
+].join(",");
+
 /**
  * Implements Probot's default logging formatting and error captioning using Sentry.
  *
@@ -37,19 +56,8 @@ function getTransformStream(options = {}) {
   }
 
   const pretty = prettyFactory({
-    ignore: [
-      // default pino keys
-      "time",
-      "pid",
-      "hostname",
-      // remove keys from pino-http
-      "req",
-      "res",
-      "responseTime",
-    ].join(","),
-    errorProps: ["event", "status", "headers", "request", "sentryEventId"].join(
-      ",",
-    ),
+    ignore: pinoIgnore,
+    errorProps: pinoErrorProps,
   });
 
   return new Transform({
@@ -151,5 +159,5 @@ function toSentryError(data) {
 }
 
 module.exports = getTransformStream;
-module.exports.default = module.exports;
+module.exports.default = getTransformStream;
 module.exports.getTransformStream = getTransformStream;
