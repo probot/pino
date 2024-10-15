@@ -87,12 +87,12 @@ test("cli", (t) => {
         body += chunk.toString();
       });
       request.on("end", () => {
-        const data = JSON.parse(body);
-        const error = data.exception.values[0];
+        const data = body.split("\n").map((line) => JSON.parse(line));
+        const error = data[2].exception.values[0];
 
         t.equal(error.type, "Error");
         t.equal(error.value, "Oops");
-        t.strictSame(data.extra, {
+        t.strictSame(data[2].extra, {
           event: {
             event: "installation_repositories.added",
             id: "123",
@@ -166,8 +166,8 @@ sentryEventId: 123`
         body += chunk.toString();
       });
       request.on("end", () => {
-        const data = JSON.parse(body);
-        const error = data.exception.values[0];
+        const data = body.split("\n").map((line) => JSON.parse(line));
+        const error = data[2].exception.values[0];
 
         t.equal(error.type, "Error");
         t.equal(error.value, "Oh no!");

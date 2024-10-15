@@ -23,7 +23,7 @@ test("API", (t) => {
     t.end();
   });
 
-  t.test("Sentry integation enabled", (t) => {
+  t.test("Sentry integration enabled", (t) => {
     const transform = getTransformStream({
       sentryDsn: "http://username@example.com/1234",
     });
@@ -50,7 +50,7 @@ test("API", (t) => {
 
       Sentry.withScope(function (scope) {
         scope.addEventProcessor(function (event, hint) {
-          t.strictSame(event.user, { id: "456", username: undefined });
+          t.strictSame(event.user, { id: "456" });
         });
 
         log.fatal(event({}));

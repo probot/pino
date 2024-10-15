@@ -76,8 +76,7 @@ function getTransformStream(options = {}) {
       }
 
       Sentry.withScope(function (scope) {
-        const sentryLevelName =
-          data.level === 50 ? Sentry.Severity.Error : Sentry.Severity.Fatal;
+        const sentryLevelName = data.level === 50 ? "error" : "fatal";
         scope.setLevel(sentryLevelName);
 
         for (const extra of ["event", "headers", "request", "status"]) {
