@@ -1,10 +1,11 @@
-const path = require("path");
-const spawn = require("child_process").spawn;
-const { createServer } = require("http");
+"use strict";
 
-const test = require("tap").test;
+const { join: pathJoin } = require("node:path");
+const { spawn } = require("node:child_process");
+const { createServer } = require("node:http");
+const { test } = require("tap");
 
-const cliPath = require.resolve(path.join(__dirname, "..", "cli.js"));
+const cliPath = require.resolve(pathJoin(__dirname, "..", "bin", "cli.js"));
 const nodeBinaryPath = process.argv[0];
 
 const logLine =
@@ -32,12 +33,12 @@ test("cli", (t) => {
       child.stdout.on("data", (data) => {
         t.equal(
           data.toString().replace(stripAnsiColorRE, ""),
-          `INFO (probot): hello future\n`
+          `INFO (probot): hello future\n`,
         );
       });
       child.stdin.write(logLine);
       t.teardown(() => child.kill());
-    }
+    },
   );
 
   t.test("errors include event, status, headers, and request keys", (t) => {
@@ -47,16 +48,16 @@ test("cli", (t) => {
     child.stdout.on("data", (data) => {
       t.match(
         data.toString().replace(stripAnsiColorRE, ""),
-        /event: "installation_repositories.added"/
+        /event: "installation_repositories.added"/,
       );
       t.match(data.toString().replace(stripAnsiColorRE, ""), /status: 500/);
       t.match(
         data.toString().replace(stripAnsiColorRE, ""),
-        /x-github-request-id: "789"/
+        /x-github-request-id: "789"/,
       );
       t.match(
         data.toString(),
-        /url: "https:\/\/api.github.com\/repos\/octocat\/hello-world\/"/
+        /url: "https:\/\/api.github.com\/repos\/octocat\/hello-world\/"/,
       );
     });
     child.stdin.write(errorLine);
@@ -85,7 +86,7 @@ test("cli", (t) => {
     child.stdout.on("data", (data) => {
       t.equal(
         data.toString().replace(stripAnsiColorRE, ""),
-        logLine.replace('"level":30', '"level":"info"')
+        logLine.replace('"level":30', '"level":"info"'),
       );
     });
     child.stdin.write(logLine);
@@ -102,12 +103,12 @@ test("cli", (t) => {
         body += chunk.toString();
       });
       request.on("end", () => {
-        const data = body.split("\n").map((line) => JSON.parse(line));
-        const error = data[2].exception.values[0];
+        const data = JSON.parse(body.split("\n")[2]);
+        const error = data.exception.values[0];
 
         t.equal(error.type, "Error");
         t.equal(error.value, "Oops");
-        t.strictSame(data[2].extra, {
+        t.strictSame(data.extra, {
           event: {
             event: "installation_repositories.added",
             id: "123",
@@ -125,7 +126,7 @@ test("cli", (t) => {
           },
           status: 500,
         });
-        server.close(t.end);
+        server.close(() => t.end());
       });
 
       response.writeHead(200);
@@ -157,17 +158,17 @@ test("cli", (t) => {
           .trim()
           .replace(/sentryEventId: \w+$/, "sentryEventId: 123"),
         `event: {
-    id: "123"
-}
-status: 500
-headers: {
-    x-github-request-id: "789"
-}
-request: {
-    method: "GET"
-    url: "https://api.github.com/repos/octocat/hello-world/"
-}
-sentryEventId: 123`
+        id: "123"
+    }
+    status: 500
+    headers: {
+        x-github-request-id: "789"
+    }
+    request: {
+        method: "GET"
+        url: "https://api.github.com/repos/octocat/hello-world/"
+    }
+    sentryEventId: 123`,
       );
     });
     child.stdin.write(errorLine);
@@ -184,13 +185,13 @@ sentryEventId: 123`
         body += chunk.toString();
       });
       request.on("end", () => {
-        const data = body.split("\n").map((line) => JSON.parse(line));
-        const error = data[2].exception.values[0];
+        const data = JSON.parse(body.split("\n")[2]);
+        const error = data.exception.values[0];
 
         t.equal(error.type, "Error");
         t.equal(error.value, "Oh no!");
 
-        server.close(t.end);
+        server.close(() => t.end());
       });
 
       response.writeHead(200);
@@ -210,7 +211,7 @@ sentryEventId: 123`
     child.stdout.on("data", (data) => {
       t.match(
         data.toString().replace(stripAnsiColorRE, ""),
-        /^FATAL \(probot\): Oh no!\n/
+        /^FATAL \(probot\): Oh no!\n/,
       );
     });
     child.stdin.write(fatalErrorLine);
