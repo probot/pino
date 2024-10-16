@@ -30,7 +30,7 @@
     "tap": "^16.0.1"
   },
   "dependencies": {
-    "@sentry/node": "^6.0.0",
+    "@sentry/node": "^7.119.2",
     "pino-pretty": "^6.0.0",
     "pump": "^3.0.0",
     "split2": "^4.0.0"
