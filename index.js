@@ -85,7 +85,8 @@ function getTransformStream(options = {}) {
       }
 
       withScope((scope) => {
-        scope.setLevel(data.level === 50 ? "error" : "fatal");
+        const sentryLevelName = data.level === 50 ? "error" : "fatal";
+        scope.setLevel(sentryLevelName);
 
         if (data.event) {
           scope.setExtra("event", data.event);
