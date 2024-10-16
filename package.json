@@ -13,7 +13,7 @@
   "types": "index.d.ts",
   "scripts": {
     "coverage": "tap --coverage-report html",
-    "test": "tap 'test/*.js'",
+    "test": "tap",
     "lint": "prettier --check '**/*.js' '.github/**/*.yml' '*.md' package.json",
     "lint:fix": "prettier --write '**/*.js' '.github/**/*.yml' '*.md' package.json"
   },
@@ -30,15 +30,12 @@
     "tap": "^16.0.1"
   },
   "dependencies": {
-    "@sentry/node": "^7.119.2",
+    "@sentry/node": "^8.0.0",
     "pino-pretty": "^6.0.0",
     "pump": "^3.0.0",
-    "readable-stream": "^3.6.0",
     "split2": "^4.0.0"
   },
-  "release": {
-    "branches": [
-      "main"
-    ]
+  "engines": {
+    "node": ">=18"
   }
 }

@@ -1,6 +1,6 @@
 module.exports = { getTransformStream };
 
-const { Transform } = require("readable-stream");
+const { Transform } = require("node:stream");
 
 const prettyFactory = require("pino-pretty");
 const Sentry = require("@sentry/node");
