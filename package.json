@@ -33,7 +33,7 @@
     "@sentry/node": "^7.119.2",
     "pino-pretty": "^6.0.0",
     "pump": "^3.0.0",
-    "readable-stream": "^3.6.0",
+    "readable-stream": "^4.0.0",
     "split2": "^4.0.0"
   },
   "release": {
