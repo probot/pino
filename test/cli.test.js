@@ -31,7 +31,7 @@ test("cli", (t) => {
       });
       child.stdin.write(logLine);
       t.teardown(() => child.kill());
-    }
+    },
   );
 
   t.test("errors include event, status, headers, and request keys", (t) => {
@@ -44,7 +44,7 @@ test("cli", (t) => {
       t.match(data.toString(), /x-github-request-id: "789"/);
       t.match(
         data.toString(),
-        /url: "https:\/\/api.github.com\/repos\/octocat\/hello-world\/"/
+        /url: "https:\/\/api.github.com\/repos\/octocat\/hello-world\/"/,
       );
     });
     child.stdin.write(errorLine);
@@ -149,7 +149,7 @@ request: {
     method: "GET"
     url: "https://api.github.com/repos/octocat/hello-world/"
 }
-sentryEventId: 123`
+sentryEventId: 123`,
       );
     });
     child.stdin.write(errorLine);
