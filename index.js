@@ -2,7 +2,7 @@
 
 const { Transform } = require("node:stream");
 
-const prettyFactory = require("pino-pretty");
+const { prettyFactory } = require("pino-pretty");
 const Sentry = require("@sentry/node");
 
 const LEVEL_MAP = {
