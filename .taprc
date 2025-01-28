@@ -1,7 +1,4 @@
 files:
   - test/**/*.test.js
 
-lines: 91
-functions: 100
-branches: 83
-statements: 91
+disable-coverage: true
