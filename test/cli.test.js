@@ -32,7 +32,7 @@ test("cli", (t) => {
       child.stdout.on("data", (data) => {
         t.equal(
           data.toString().replace(stripAnsiColorRE, ""),
-          `INFO (probot): hello future\n`
+          `INFO (probot): hello future\n`,
         );
       });
       child.stdin.write(logLine);
@@ -47,12 +47,12 @@ test("cli", (t) => {
     child.stdout.on("data", (data) => {
       t.match(
         data.toString().replace(stripAnsiColorRE, ""),
-        /event: "installation_repositories.added"/
+        /event: "installation_repositories.added"/,
       );
       t.match(data.toString().replace(stripAnsiColorRE, ""), /status: 500/);
       t.match(
         data.toString().replace(stripAnsiColorRE, ""),
-        /x-github-request-id: "789"/
+        /x-github-request-id: "789"/,
       );
       t.match(
         data.toString(),
@@ -85,7 +85,7 @@ test("cli", (t) => {
     child.stdout.on("data", (data) => {
       t.equal(
         data.toString().replace(stripAnsiColorRE, ""),
-        logLine.replace('"level":30', '"level":"info"')
+        logLine.replace('"level":30', '"level":"info"'),
       );
     });
     child.stdin.write(logLine);
@@ -210,7 +210,7 @@ sentryEventId: 123`,
     child.stdout.on("data", (data) => {
       t.match(
         data.toString().replace(stripAnsiColorRE, ""),
-        /^FATAL \(probot\): Oh no!\n/
+        /^FATAL \(probot\): Oh no!\n/,
       );
     });
     child.stdin.write(fatalErrorLine);
