@@ -26,7 +26,7 @@
   "devDependencies": {
     "@types/pino": "^7.0.5",
     "pino": "^6.6.0",
-    "prettier": "^2.1.1",
+    "prettier": "^3.4.2",
     "tap": "^16.0.1"
   },
   "dependencies": {
