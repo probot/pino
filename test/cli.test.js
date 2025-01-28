@@ -158,17 +158,17 @@ test("cli", (t) => {
           .trim()
           .replace(/sentryEventId: \w+$/, "sentryEventId: 123"),
         `event: {
-    id: "123"
-}
-status: 500
-headers: {
-    x-github-request-id: "789"
-}
-request: {
-    method: "GET"
-    url: "https://api.github.com/repos/octocat/hello-world/"
-}
-sentryEventId: 123`,
+        id: "123"
+    }
+    status: 500
+    headers: {
+        x-github-request-id: "789"
+    }
+    request: {
+        method: "GET"
+        url: "https://api.github.com/repos/octocat/hello-world/"
+    }
+    sentryEventId: 123`,
       );
     });
     child.stdin.write(errorLine);
