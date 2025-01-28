@@ -125,7 +125,7 @@ test("cli", (t) => {
           },
           status: 500,
         });
-        server.close(() => t.end);
+        server.close(() => t.end());
       });
 
       response.writeHead(200);
