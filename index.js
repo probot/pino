@@ -1,7 +1,5 @@
 "use strict";
 
-module.exports = { getTransformStream };
-
 const { Transform } = require("node:stream");
 
 const prettyFactory = require("pino-pretty");
@@ -147,3 +145,7 @@ function toSentryError(data) {
   error.stack = data.stack;
   return error;
 }
+
+module.exports = getTransformStream;
+module.exports.default = getTransformStream;
+module.exports.getTransformStream = getTransformStream;
