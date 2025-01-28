@@ -48,7 +48,7 @@ function getTransformStream(options = {}) {
       "responseTime",
     ].join(","),
     errorProps: ["event", "status", "headers", "request", "sentryEventId"].join(
-      ","
+      ",",
     ),
   });
 
