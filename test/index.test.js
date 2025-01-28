@@ -1,8 +1,10 @@
+"use strict";
+
 const Sentry = require("@sentry/node");
 
-const Stream = require("stream");
+const { Writable: WritableStream } = require("stream");
 
-const test = require("tap").test;
+const { test } = require("tap");
 const pino = require("pino");
 const { getTransformStream } = require("..");
 
@@ -134,7 +136,7 @@ test("API", (t) => {
   t.test(
     "A single \\n is added to the end log lines when LOG_FORMAT is set to 'json' (https://github.com/probot/probot/issues/1334)",
     (t) => {
-      const streamLogsToOutput = new Stream.Writable({ objectMode: true });
+      const streamLogsToOutput = new WritableStream({ objectMode: true });
       const output = [];
       streamLogsToOutput._write = (line, encoding, done) => {
         output.push(line);

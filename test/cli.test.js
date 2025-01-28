@@ -1,10 +1,11 @@
-const path = require("path");
-const spawn = require("child_process").spawn;
-const { createServer } = require("http");
+"use strict";
 
-const test = require("tap").test;
+const { join: pathJoin } = require("node:path");
+const { spawn } = require("node:child_process");
+const { createServer } = require("node:http");
+const { test } = require("tap");
 
-const cliPath = require.resolve(path.join(__dirname, "..", "cli.js"));
+const cliPath = require.resolve(pathJoin(__dirname, "..", "bin", "cli.js"));
 const nodeBinaryPath = process.argv[0];
 
 const logLine =

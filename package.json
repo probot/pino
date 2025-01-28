@@ -6,7 +6,7 @@
     "provenance": true
   },
   "bin": {
-    "pino-probot": "./cli.js"
+    "pino-probot": "./bin/cli.js"
   },
   "description": "formats pino logs and sends errors to Sentry",
   "main": "index.js",
