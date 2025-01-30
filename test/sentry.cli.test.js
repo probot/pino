@@ -4,6 +4,9 @@ const { join: pathJoin } = require("node:path");
 const { spawn } = require("node:child_process");
 const { createServer } = require("node:http");
 const { test } = require("tap");
+const { once } = require("node:events");
+
+const SENTRY_DSN = "http://username@example.com/1234";
 
 const cliPath = require.resolve(pathJoin(__dirname, "..", "bin", "cli.js"));
 const nodeBinaryPath = process.argv[0];
@@ -26,8 +29,8 @@ const env = {
 test("sentry", (t) => {
   t.plan(2);
 
-  t.test("SENTRY_DSN", (t) => {
-    t.plan(5);
+  t.test("SENTRY_DSN", async (t) => {
+    t.plan(2);
 
     const server = createServer((request, response) => {
       // we can access HTTP headers
@@ -59,7 +62,6 @@ test("sentry", (t) => {
           },
           status: 500,
         });
-        server.close(() => t.end());
       });
 
       response.writeHead(200);
@@ -69,10 +71,12 @@ test("sentry", (t) => {
 
     server.listen(0);
 
+    await once(server, "listening");
+
     const child = spawn(nodeBinaryPath, [cliPath], {
       env: {
         ...env,
-        SENTRY_DSN: `http://user@localhost:${server.address().port}/123`,
+        SENTRY_DSN,
       },
     });
     child.on("error", t.threw);
@@ -106,11 +110,15 @@ test("sentry", (t) => {
     });
     child.stdin.write(errorLine);
 
-    t.teardown(() => child.kill());
+    t.teardown(() => {
+      child.kill();
+      server.closeAllConnections();
+      server.close();
+    });
   });
 
-  t.test("SENTRY_DSN with fatal error", (t) => {
-    t.plan(3);
+  t.test("SENTRY_DSN with fatal error", async (t) => {
+    t.plan(1);
 
     const server = createServer((request, response) => {
       let body = "";
@@ -123,8 +131,6 @@ test("sentry", (t) => {
 
         t.equal(error.type, "Error");
         t.equal(error.value, "Oh no!");
-
-        server.close(() => t.end());
       });
 
       response.writeHead(200);
@@ -133,11 +139,12 @@ test("sentry", (t) => {
     });
 
     server.listen(0);
+    await once(server, "listening");
 
     const child = spawn(nodeBinaryPath, [cliPath], {
       env: {
         ...env,
-        SENTRY_DSN: `http://user@localhost:${server.address().port}/123`,
+        SENTRY_DSN,
       },
     });
     child.on("error", t.threw);
@@ -149,6 +156,10 @@ test("sentry", (t) => {
     });
     child.stdin.write(fatalErrorLine);
 
-    t.teardown(() => child.kill());
+    t.teardown(() => {
+      child.kill();
+      server.closeAllConnections();
+      server.close();
+    });
   });
 });
