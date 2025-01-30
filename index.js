@@ -1,9 +1,9 @@
-module.exports = { getTransformStream };
+"use strict";
 
-const { Transform } = require("readable-stream");
+const { Transform } = require("node:stream");
 
-const prettyFactory = require("pino-pretty");
-const Sentry = require("@sentry/node");
+const { prettyFactory } = require("pino-pretty");
+const { init, withScope, captureException } = require("@sentry/node");
 
 const LEVEL_MAP = {
   10: "trace",
@@ -14,8 +14,27 @@ const LEVEL_MAP = {
   60: "fatal",
 };
 
+const pinoIgnore = [
+  // default pino keys
+  "time",
+  "pid",
+  "hostname",
+  // remove keys from pino-http
+  "req",
+  "res",
+  "responseTime",
+].join(",");
+
+const pinoErrorProps = [
+  "event",
+  "status",
+  "headers",
+  "request",
+  "sentryEventId",
+].join(",");
+
 /**
- * Implements Probot's default logging formatting and error captionaing using Sentry.
+ * Implements Probot's default logging formatting and error captioning using Sentry.
  *
  * @param {import("./").Options} options
  * @returns Transform
@@ -28,7 +47,7 @@ function getTransformStream(options = {}) {
   const sentryEnabled = !!options.sentryDsn;
 
   if (sentryEnabled) {
-    Sentry.init({
+    init({
       dsn: options.sentryDsn,
       // See https://github.com/getsentry/sentry-javascript/issues/1964#issuecomment-688482615
       // 6 is enough to serialize the deepest property across all GitHub Event payloads
@@ -37,19 +56,8 @@ function getTransformStream(options = {}) {
   }
 
   const pretty = prettyFactory({
-    ignore: [
-      // default pino keys
-      "time",
-      "pid",
-      "hostname",
-      // remove keys from pino-http
-      "req",
-      "res",
-      "responseTime",
-    ].join(","),
-    errorProps: ["event", "status", "headers", "request", "sentryEventId"].join(
-      ",",
-    ),
+    ignore: pinoIgnore,
+    errorProps: pinoErrorProps,
   });
 
   return new Transform({
@@ -57,8 +65,9 @@ function getTransformStream(options = {}) {
     transform(chunk, enc, cb) {
       const line = chunk.toString().trim();
 
-      /* istanbul ignore if */
+      /* c8 ignore start */
       if (line === undefined) return cb();
+      /* c8 ignore stop */
 
       const data = sentryEnabled ? JSON.parse(line) : null;
 
@@ -75,18 +84,26 @@ function getTransformStream(options = {}) {
         return;
       }
 
-      Sentry.withScope(function (scope) {
+      withScope((scope) => {
         const sentryLevelName = data.level === 50 ? "error" : "fatal";
         scope.setLevel(sentryLevelName);
 
-        for (const extra of ["event", "headers", "request", "status"]) {
-          if (!data[extra]) continue;
-
-          scope.setExtra(extra, data[extra]);
+        if (data.event) {
+          scope.setExtra("event", data.event);
+        }
+        if (data.headers) {
+          scope.setExtra("headers", data.headers);
+        }
+        if (data.request) {
+          scope.setExtra("request", data.request);
+        }
+        if (data.status) {
+          scope.setExtra("status", data.status);
         }
 
         // set user id and username to installation ID and account login
-        if (data.event && data.event.payload) {
+        const payload = data.event?.payload || data.err?.event?.payload;
+        if (payload) {
           const {
             // When GitHub App is installed organization wide
             installation: { id, account: { login: account } = {} } = {},
@@ -95,15 +112,15 @@ function getTransformStream(options = {}) {
             organization: { login: organization } = {},
             // When the repository belongs to a user
             repository: { owner: { login: owner } = {} } = {},
-          } = data.event.payload;
+          } = payload;
 
           scope.setUser({
-            id: id,
+            id,
             username: account || organization || owner,
           });
         }
 
-        const sentryEventId = Sentry.captureException(toSentryError(data));
+        const sentryEventId = captureException(toSentryError(data));
 
         // reduce logging data and add reference to sentry event instead
         if (data.event) {
@@ -121,10 +138,11 @@ function getTransformStream(options = {}) {
           return cb(null, pretty(data));
         }
 
-        // istanbul ignore if
+        /* c8 ignore start */
         if (levelAsString) {
           return cb(null, stringifyLogLevel(data));
         }
+        /* c8 ignore stop */
 
         cb(null, JSON.stringify(data) + "\n");
       });
@@ -143,3 +161,7 @@ function toSentryError(data) {
   error.stack = data.stack;
   return error;
 }
+
+module.exports = getTransformStream;
+module.exports.default = getTransformStream;
+module.exports.getTransformStream = getTransformStream;
