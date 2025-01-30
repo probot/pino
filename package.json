@@ -9,6 +9,7 @@
     "pino-probot": "./bin/cli.js"
   },
   "description": "formats pino logs and sends errors to Sentry",
+  "type": "module",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {

@@ -1,14 +1,19 @@
 "use strict";
 
-const { join: pathJoin } = require("node:path");
-const { spawn } = require("node:child_process");
-const { createServer } = require("node:http");
-const { test } = require("tap");
-const { once } = require("node:events");
+import {
+  dirname as pathDirname,
+  join as pathJoin,
+  resolve as pathResolve,
+} from "node:path";
+import { spawn } from "node:child_process";
+import { createServer } from "node:http";
+import { test } from "tap";
+import { once } from "node:events";
+import { fileURLToPath } from "node:url";
 
 const SENTRY_DSN = "http://username@example.com/1234";
-
-const cliPath = require.resolve(pathJoin(__dirname, "..", "bin", "cli.js"));
+const __dirname = pathDirname(fileURLToPath(import.meta.url));
+const cliPath = pathResolve(pathJoin(__dirname, "..", "bin", "cli.js"));
 const nodeBinaryPath = process.argv[0];
 
 const errorLine =
