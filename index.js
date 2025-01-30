@@ -1,5 +1,3 @@
-"use strict";
-
 import { Transform } from "node:stream";
 
 import { prettyFactory } from "pino-pretty";
