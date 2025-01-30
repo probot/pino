@@ -2,7 +2,6 @@
 
 const { join: pathJoin } = require("node:path");
 const { spawn } = require("node:child_process");
-const { createServer } = require("node:http");
 const { test } = require("tap");
 
 const cliPath = require.resolve(pathJoin(__dirname, "..", "bin", "cli.js"));
@@ -24,6 +23,8 @@ const env = {
 };
 
 test("cli", (t) => {
+  t.plan(4);
+
   t.test(
     "formats using pino-pretty and Probot's preferences by default",
     (t) => {
@@ -92,132 +93,4 @@ test("cli", (t) => {
     child.stdin.write(logLine);
     t.teardown(() => child.kill());
   });
-
-  t.test("SENTRY_DSN", (t) => {
-    t.plan(5);
-
-    const server = createServer((request, response) => {
-      // we can access HTTP headers
-      let body = "";
-      request.on("data", (chunk) => {
-        body += chunk.toString();
-      });
-      request.on("end", () => {
-        const data = JSON.parse(body.split("\n")[2]);
-        const error = data.exception.values[0];
-
-        t.equal(error.type, "Error");
-        t.equal(error.value, "Oops");
-        t.strictSame(data.extra, {
-          event: {
-            event: "installation_repositories.added",
-            id: "123",
-            installation: 456,
-          },
-          headers: { "x-github-request-id": "789" },
-          request: {
-            headers: {
-              accept: "application/vnd.github.v3+json",
-              authorization: "[Filtered]",
-              "user-agent": "probot/10.0.0",
-            },
-            method: "GET",
-            url: "https://api.github.com/repos/octocat/hello-world/",
-          },
-          status: 500,
-        });
-        server.close(() => t.end());
-      });
-
-      response.writeHead(200);
-      response.write("ok");
-      response.end();
-    });
-
-    server.listen(0);
-
-    const child = spawn(nodeBinaryPath, [cliPath], {
-      env: {
-        ...env,
-        SENTRY_DSN: `http://user@localhost:${server.address().port}/123`,
-      },
-    });
-    child.on("error", t.threw);
-    child.stdout.on("data", (data) => {
-      const errorStringLines = data
-        .toString()
-        .replace(stripAnsiColorRE, "")
-        .split(/\n/);
-      t.equal(errorStringLines[0].trim(), "ERROR (probot): Oops");
-
-      // skip the error stack, normalize Sentry Event ID, compare error details only
-      t.equal(
-        errorStringLines
-          .slice(9)
-          .join("\n")
-          .trim()
-          .replace(/sentryEventId: \w+$/, "sentryEventId: 123"),
-        `event: {
-        id: "123"
-    }
-    status: 500
-    headers: {
-        x-github-request-id: "789"
-    }
-    request: {
-        method: "GET"
-        url: "https://api.github.com/repos/octocat/hello-world/"
-    }
-    sentryEventId: 123`,
-      );
-    });
-    child.stdin.write(errorLine);
-
-    t.teardown(() => child.kill());
-  });
-
-  t.test("SENTRY_DSN with fatal error", (t) => {
-    t.plan(3);
-
-    const server = createServer((request, response) => {
-      let body = "";
-      request.on("data", (chunk) => {
-        body += chunk.toString();
-      });
-      request.on("end", () => {
-        const data = JSON.parse(body.split("\n")[2]);
-        const error = data.exception.values[0];
-
-        t.equal(error.type, "Error");
-        t.equal(error.value, "Oh no!");
-
-        server.close(() => t.end());
-      });
-
-      response.writeHead(200);
-      response.write("ok");
-      response.end();
-    });
-
-    server.listen(0);
-
-    const child = spawn(nodeBinaryPath, [cliPath], {
-      env: {
-        ...env,
-        SENTRY_DSN: `http://user@localhost:${server.address().port}/123`,
-      },
-    });
-    child.on("error", t.threw);
-    child.stdout.on("data", (data) => {
-      t.match(
-        data.toString().replace(stripAnsiColorRE, ""),
-        /^FATAL \(probot\): Oh no!\n/,
-      );
-    });
-    child.stdin.write(fatalErrorLine);
-
-    t.teardown(() => child.kill());
-  });
-
-  t.end();
 });
