@@ -26,10 +26,97 @@ const env = {
   TERM: "dumb",
 };
 
-test("sentry", (t) => {
-  t.plan(2);
+test("SENTRY_DSN", (t) => {
+  t.plan(3);
 
-  t.test("SENTRY_DSN", async (t) => {
+  t.test("SENTRY_DSN with INFO", async (t) => {
+    t.plan(2);
+
+    const server = createServer((request, response) => {
+      // we can access HTTP headers
+      let body = "";
+      request.on("data", (chunk) => {
+        body += chunk.toString();
+      });
+      request.on("end", () => {
+        const data = JSON.parse(body.split("\n")[2]);
+        const error = data.exception.values[0];
+
+        t.equal(error.type, "Error");
+        t.equal(error.value, "Oops");
+        t.strictSame(data.extra, {
+          event: {
+            event: "installation_repositories.added",
+            id: "123",
+            installation: 456,
+          },
+          headers: { "x-github-request-id": "789" },
+          request: {
+            headers: {
+              accept: "application/vnd.github.v3+json",
+              authorization: "[Filtered]",
+              "user-agent": "probot/10.0.0",
+            },
+            method: "GET",
+            url: "https://api.github.com/repos/octocat/hello-world/",
+          },
+          status: 500,
+        });
+      });
+
+      response.writeHead(200);
+      response.write("ok");
+      response.end();
+    });
+
+    server.listen(0);
+
+    await once(server, "listening");
+
+    const child = spawn(nodeBinaryPath, [cliPath], {
+      env: {
+        ...env,
+        SENTRY_DSN,
+      },
+    });
+    child.on("error", t.threw);
+    child.stdout.on("data", (data) => {
+      const logStringLine = data
+        .toString()
+        .replace(stripAnsiColorRE, "")
+        .split(/\n/);
+      t.equal(logStringLine[0].trim(), "INFO (probot): hello future");
+
+      // skip the error stack, normalize Sentry Event ID, compare error details only
+      t.equal(
+        logStringLine
+          .join("\n")
+          .trim()
+          .replace(/sentryEventId: \w+$/, "sentryEventId: 123"),
+        `event: {
+        id: "123"
+    }
+    status: 500
+    headers: {
+        x-github-request-id: "789"
+    }
+    request: {
+        method: "GET"
+        url: "https://api.github.com/repos/octocat/hello-world/"
+    }
+    sentryEventId: 123`,
+      );
+    });
+    child.stdin.write(logLine);
+
+    t.teardown(() => {
+      child.kill();
+      server.closeAllConnections();
+      server.close();
+    });
+  });
+
+  t.test("SENTRY_DSN with ERROR error", async (t) => {
     t.plan(2);
 
     const server = createServer((request, response) => {
@@ -117,7 +204,7 @@ test("sentry", (t) => {
     });
   });
 
-  t.test("SENTRY_DSN with fatal error", async (t) => {
+  t.test("SENTRY_DSN with FATAL error", async (t) => {
     t.plan(1);
 
     const server = createServer((request, response) => {
