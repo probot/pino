@@ -1,10 +1,10 @@
 "use strict";
 
-const { withScope } = require("@sentry/node");
+import { withScope } from "@sentry/node";
 
-const { test } = require("tap");
-const { pino } = require("pino");
-const { getTransformStream } = require("..");
+import { test } from "tap";
+import { pino } from "pino";
+import { getTransformStream } from "../index.js";
 
 test("API", (t) => {
   t.plan(1);

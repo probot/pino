@@ -1,20 +1,15 @@
 import { Transform } from "node:stream";
 
-type getTransformStream = (options?: getTransformStream.Options) => Transform;
+declare function getTransformStream(options?: Options): Transform;
 
-declare namespace getTransformStream {
-  export type LogLevel = "trace" | "debug" | "info" | "warn" | "error" | "fatal";
+export type LogLevel = "trace" | "debug" | "info" | "warn" | "error" | "fatal";
 
-  export type Options = {
-    logFormat?: "json" | "pretty";
-    logLevelInString?: boolean;
-    sentryDsn?: string;
-  };
+export type Options = {
+  logFormat?: "json" | "pretty";
+  logLevelInString?: boolean;
+  sentryDsn?: string;
+};
 
-  export const getTransformStream: getTransformStream
-  export { getTransformStream as default }
+export {
+  getTransformStream
 }
-
-declare function getTransformStream(...params: Parameters<getTransformStream>): ReturnType<getTransformStream>
-
-export = getTransformStream

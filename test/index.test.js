@@ -1,10 +1,10 @@
 "use strict";
 
-const { Writable: WritableStream } = require("stream");
+import { Writable as WritableStream } from "stream";
 
-const { test } = require("tap");
-const { pino } = require("pino");
-const { getTransformStream } = require("..");
+import { test } from "tap";
+import { pino } from "pino";
+import { getTransformStream } from "../index.js";
 
 test("API", (t) => {
   let env = Object.assign({}, process.env);

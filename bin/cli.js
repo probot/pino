@@ -1,9 +1,9 @@
 "use strict";
 
-const pump = require("pump");
-const split = require("split2");
+import pump from "pump";
+import split from "split2";
 
-const { getTransformStream } = require("..");
+import { getTransformStream } from "../index.js";
 
 const options = {
   logFormat: process.env.LOG_FORMAT,

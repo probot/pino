@@ -1,10 +1,16 @@
 "use strict";
 
-const { join: pathJoin } = require("node:path");
-const { spawn } = require("node:child_process");
-const { test } = require("tap");
+import {
+  dirname as pathDirname,
+  join as pathJoin,
+  resolve as pathResolve,
+} from "node:path";
+import { spawn } from "node:child_process";
+import { test } from "tap";
+import { fileURLToPath } from "node:url";
 
-const cliPath = require.resolve(pathJoin(__dirname, "..", "bin", "cli.js"));
+const __dirname = pathDirname(fileURLToPath(import.meta.url));
+const cliPath = pathResolve(pathJoin(__dirname, "..", "bin", "cli.js"));
 const nodeBinaryPath = process.argv[0];
 
 const logLine =

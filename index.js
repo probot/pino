@@ -1,9 +1,7 @@
-"use strict";
+import { Transform } from "node:stream";
 
-const { Transform } = require("node:stream");
-
-const { prettyFactory } = require("pino-pretty");
-const { init, withScope, captureException } = require("@sentry/node");
+import { prettyFactory } from "pino-pretty";
+import { init, withScope, captureException } from "@sentry/node";
 
 const LEVEL_MAP = {
   10: "trace",
@@ -40,7 +38,7 @@ const pinoErrorProps = [
  * @returns Transform
  * @see https://getpino.io/#/docs/transports
  */
-function getTransformStream(options = {}) {
+export function getTransformStream(options = {}) {
   const formattingEnabled = options.logFormat !== "json";
 
   const levelAsString = options.logLevelInString;
@@ -161,7 +159,3 @@ function toSentryError(data) {
   error.stack = data.stack;
   return error;
 }
-
-module.exports = getTransformStream;
-module.exports.default = getTransformStream;
-module.exports.getTransformStream = getTransformStream;

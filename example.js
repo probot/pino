@@ -1,6 +1,4 @@
-"use strict";
-
-var pino = require("pino")({
+const pino = (await import("pino")).default({
   name: "probot",
 });
 
