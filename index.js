@@ -155,7 +155,7 @@ function stringifyLogLevel(data) {
 
 function toSentryError(data) {
   const error = new Error(data.msg);
-  error.name = data.type;
-  error.stack = data.stack;
+  error.name = data.type || data.err?.type;
+  error.stack = data.stack || data.err?.stack;
   return error;
 }
