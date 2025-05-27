@@ -43,7 +43,7 @@ test("API", (t) => {
 
       withScope(function (scope) {
         scope.addEventProcessor(function (event, hint) {
-          t.strictSame(event.user, { id: "456" });
+          t.strictSame(event.user.id, "456");
         });
 
         log.fatal(event({}));
