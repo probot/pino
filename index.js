@@ -62,10 +62,6 @@ export async function getTransformStream(options = {}) {
       transform(chunk, enc, cb) {
         const line = chunk.toString().trim();
 
-        /* c8 ignore start */
-        if (line === undefined) return cb();
-        /* c8 ignore stop */
-
         if (formattingEnabled) {
           return cb(null, pretty(line));
         }
@@ -97,10 +93,6 @@ export async function getTransformStream(options = {}) {
       objectMode: true,
       transform(chunk, enc, cb) {
         const line = chunk.toString().trim();
-
-        /* c8 ignore start */
-        if (line === undefined) return cb();
-        /* c8 ignore stop */
 
         const data = JSON.parse(line);
 
