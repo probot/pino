@@ -18,14 +18,14 @@ test("API", (t) => {
     t.end();
   });
 
-  t.test("getTransformStream without options", (t) => {
-    getTransformStream();
+  t.test("getTransformStream without options", async (t) => {
+    await getTransformStream();
     t.end();
   });
 
   t.test(
     "A single \\n is added to the end log lines when LOG_FORMAT is set to 'json' (https://github.com/probot/probot/issues/1334)",
-    (t) => {
+    async (t) => {
       const streamLogsToOutput = new WritableStream({ objectMode: true });
       const output = [];
       streamLogsToOutput._write = (line, encoding, done) => {
@@ -33,7 +33,7 @@ test("API", (t) => {
         done();
       };
 
-      const transform = getTransformStream({
+      const transform = await getTransformStream({
         logFormat: "json",
         logLevelInString: true,
       });

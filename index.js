@@ -1,7 +1,8 @@
+// @ts-check
+
 import { Transform } from "node:stream";
 
 import { prettyFactory } from "pino-pretty";
-import { init, withScope, captureException } from "@sentry/node";
 
 const LEVEL_MAP = {
   10: "trace",
@@ -31,20 +32,35 @@ const pinoErrorProps = [
   "sentryEventId",
 ].join(",");
 
+/** @type {import('@sentry/node').init} */
+let init;
+/** @type {import('@sentry/node').withScope} */
+let withScope;
+/** @type {import('@sentry/node').captureException} */
+let captureException;
+
+/** @type {import('@sentry/node')} */
+let sentry;
+
 /**
  * Implements Probot's default logging formatting and error captioning using Sentry.
  *
  * @param {import("./").Options} options
- * @returns Transform
+ * @returns {Promise<Transform>}
  * @see https://getpino.io/#/docs/transports
  */
-export function getTransformStream(options = {}) {
+export async function getTransformStream(options = {}) {
   const formattingEnabled = options.logFormat !== "json";
 
   const levelAsString = options.logLevelInString;
   const sentryEnabled = !!options.sentryDsn;
 
   if (sentryEnabled) {
+    sentry ??= await import("@sentry/node");
+    init = sentry.init;
+    withScope = sentry.withScope;
+    captureException = sentry.captureException;
+
     init({
       dsn: options.sentryDsn,
       // See https://github.com/getsentry/sentry-javascript/issues/1964#issuecomment-688482615

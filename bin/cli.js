@@ -1,5 +1,3 @@
-"use strict";
-
 import pump from "pump";
 import split from "split2";
 
@@ -11,4 +9,4 @@ const options = {
   sentryDsn: process.env.SENTRY_DSN,
 };
 
-pump(process.stdin, split(), getTransformStream(options), process.stdout);
+pump(process.stdin, split(), await getTransformStream(options), process.stdout);
