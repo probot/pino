@@ -1,7 +1,4 @@
-// @ts-check
-
 import { Transform } from "node:stream";
-
 import { prettyFactory } from "pino-pretty";
 
 const LEVEL_MAP = {
@@ -53,39 +50,22 @@ export async function getTransformStream(options = {}) {
   const formattingEnabled = options.logFormat !== "json";
 
   const levelAsString = options.logLevelInString;
-  const sentryEnabled = !!options.sentryDsn;
-
-  if (sentryEnabled) {
-    sentry ??= await import("@sentry/node");
-    init = sentry.init;
-    withScope = sentry.withScope;
-    captureException = sentry.captureException;
-
-    init({
-      dsn: options.sentryDsn,
-      // See https://github.com/getsentry/sentry-javascript/issues/1964#issuecomment-688482615
-      // 6 is enough to serialize the deepest property across all GitHub Event payloads
-      normalizeDepth: 6,
-    });
-  }
 
   const pretty = prettyFactory({
     ignore: pinoIgnore,
     errorProps: pinoErrorProps,
   });
 
-  return new Transform({
-    objectMode: true,
-    transform(chunk, enc, cb) {
-      const line = chunk.toString().trim();
+  if (!options.sentryDsn) {
+    return new Transform({
+      objectMode: true,
+      transform(chunk, enc, cb) {
+        const line = chunk.toString().trim();
 
-      /* c8 ignore start */
-      if (line === undefined) return cb();
-      /* c8 ignore stop */
+        /* c8 ignore start */
+        if (line === undefined) return cb();
+        /* c8 ignore stop */
 
-      const data = sentryEnabled ? JSON.parse(line) : null;
-
-      if (!sentryEnabled || data.level < 50) {
         if (formattingEnabled) {
           return cb(null, pretty(line));
         }
@@ -96,72 +76,112 @@ export async function getTransformStream(options = {}) {
 
         cb(null, line + "\n");
         return;
-      }
+      },
+    });
+  } else {
+    if (!sentry) {
+      // Import Sentry dynamically to avoid loading it when not needed
+      sentry = await import("@sentry/node");
+      init = sentry.init;
+      withScope = sentry.withScope;
+      captureException = sentry.captureException;
+    }
 
-      withScope((scope) => {
-        const sentryLevelName = data.level === 50 ? "error" : "fatal";
-        scope.setLevel(sentryLevelName);
-
-        if (data.event) {
-          scope.setExtra("event", data.event);
-        }
-        if (data.headers) {
-          scope.setExtra("headers", data.headers);
-        }
-        if (data.request) {
-          scope.setExtra("request", data.request);
-        }
-        if (data.status) {
-          scope.setExtra("status", data.status);
-        }
-
-        // set user id and username to installation ID and account login
-        const payload = data.event?.payload || data.err?.event?.payload;
-        if (payload) {
-          const {
-            // When GitHub App is installed organization wide
-            installation: { id, account: { login: account } = {} } = {},
-
-            // When the repository belongs to an organization
-            organization: { login: organization } = {},
-            // When the repository belongs to a user
-            repository: { owner: { login: owner } = {} } = {},
-          } = payload;
-
-          scope.setUser({
-            id,
-            username: account || organization || owner,
-          });
-        }
-
-        const sentryEventId = captureException(toSentryError(data));
-
-        // reduce logging data and add reference to sentry event instead
-        if (data.event) {
-          data.event = { id: data.event.id };
-        }
-        if (data.request) {
-          data.request = {
-            method: data.request.method,
-            url: data.request.url,
-          };
-        }
-        data.sentryEventId = sentryEventId;
-
-        if (formattingEnabled) {
-          return cb(null, pretty(data));
-        }
+    init({
+      dsn: options.sentryDsn,
+      // See https://github.com/getsentry/sentry-javascript/issues/1964#issuecomment-688482615
+      // 6 is enough to serialize the deepest property across all GitHub Event payloads
+      normalizeDepth: 6,
+    });
+    return new Transform({
+      objectMode: true,
+      transform(chunk, enc, cb) {
+        const line = chunk.toString().trim();
 
         /* c8 ignore start */
-        if (levelAsString) {
-          return cb(null, stringifyLogLevel(data));
-        }
+        if (line === undefined) return cb();
         /* c8 ignore stop */
 
-        cb(null, JSON.stringify(data) + "\n");
-      });
-    },
-  });
+        const data = JSON.parse(line);
+
+        if (data.level < 50) {
+          if (formattingEnabled) {
+            return cb(null, pretty(line));
+          }
+
+          if (levelAsString) {
+            return cb(null, stringifyLogLevel(data));
+          }
+
+          cb(null, line + "\n");
+          return;
+        }
+
+        withScope((scope) => {
+          const sentryLevelName = data.level === 50 ? "error" : "fatal";
+          scope.setLevel(sentryLevelName);
+
+          if (data.event) {
+            scope.setExtra("event", data.event);
+          }
+          if (data.headers) {
+            scope.setExtra("headers", data.headers);
+          }
+          if (data.request) {
+            scope.setExtra("request", data.request);
+          }
+          if (data.status) {
+            scope.setExtra("status", data.status);
+          }
+
+          // set user id and username to installation ID and account login
+          const payload = data.event?.payload || data.err?.event?.payload;
+          if (payload) {
+            const {
+              // When GitHub App is installed organization wide
+              installation: { id, account: { login: account } = {} } = {},
+
+              // When the repository belongs to an organization
+              organization: { login: organization } = {},
+              // When the repository belongs to a user
+              repository: { owner: { login: owner } = {} } = {},
+            } = payload;
+
+            scope.setUser({
+              id,
+              username: account || organization || owner,
+            });
+          }
+
+          const sentryEventId = captureException(toSentryError(data));
+
+          // reduce logging data and add reference to sentry event instead
+          if (data.event) {
+            data.event = { id: data.event.id };
+          }
+          if (data.request) {
+            data.request = {
+              method: data.request.method,
+              url: data.request.url,
+            };
+          }
+          data.sentryEventId = sentryEventId;
+
+          if (formattingEnabled) {
+            return cb(null, pretty(data));
+          }
+
+          /* c8 ignore start */
+          if (levelAsString) {
+            return cb(null, stringifyLogLevel(data));
+          }
+          /* c8 ignore stop */
+
+          cb(null, JSON.stringify(data) + "\n");
+        });
+      },
+    });
+  }
 }
 
 function stringifyLogLevel(data) {
