@@ -20,7 +20,7 @@ node my-script.js | LOG_FORMAT=json pino-probot
 
 ## Programmatic usage
 
-`@probot/pino` exports a `getTransformStream()` method which can be passed as 2nd argument to `pino()`
+`@probot/pino` exports a `getTransformStream()` async function which can be passed as 2nd argument to `pino()`
 
 ```js
 import pino from "pino";
@@ -30,7 +30,7 @@ const log = pino(
   {
     name: "probot",
   },
-  getTransformStream(),
+  await getTransformStream(),
 );
 ```
 
@@ -40,7 +40,7 @@ This won't log anything to stdout though. In order to pass the formatted logs ba
 import pino from "pino";
 import { getTransformStream } from "@probot/pino";
 
-const transform = getTransformStream();
+const transform = await getTransformStream();
 transform.pipe(pino.destination(1));
 const log = pino(
   {
@@ -53,7 +53,7 @@ const log = pino(
 With custom options:
 
 ```js
-const transform = getTransformStream({
+const transform = await getTransformStream({
   logFormat: "json",
   logLevelInString: true,
   sentryDsn: "http://username@example.com/1234",

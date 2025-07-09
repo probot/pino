@@ -15,9 +15,9 @@ test("API", (t) => {
     process.env = { ...env };
   });
 
-  t.test("Sentry integration enabled", (t) => {
+  t.test("Sentry integration enabled", async (t) => {
     t.plan(6);
-    const transform = getTransformStream({
+    const transform = await getTransformStream({
       sentryDsn: "http://username@example.com/1234",
     });
     const log = pino({}, transform);
@@ -103,10 +103,10 @@ test("API", (t) => {
       });
     });
 
-    t.test("with logFormat: json", (t) => {
+    t.test("with logFormat: json", async (t) => {
       t.plan(1);
 
-      const transform = getTransformStream({
+      const transform = await getTransformStream({
         sentryDsn: "http://username@example.com/1234",
         logFormat: "json",
       });
