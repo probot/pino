@@ -1,4 +1,5 @@
 import { Transform } from "node:stream";
+import { npxImport } from "npx-import-light";
 import { prettyFactory } from "pino-pretty";
 
 const LEVEL_MAP = {
@@ -77,7 +78,9 @@ export async function getTransformStream(options = {}) {
   } else {
     if (!sentry) {
       // Import Sentry dynamically to avoid loading it when not needed
-      sentry = await import("@sentry/node");
+      sentry = await npxImport("@sentry/node@9.27.0", {
+        onlyPackageRunner: true,
+      });
       init = sentry.init;
       withScope = sentry.withScope;
       captureException = sentry.captureException;
