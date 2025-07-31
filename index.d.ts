@@ -5,9 +5,9 @@ declare function getTransformStream(options?: Options): Promise<Transform>;
 export type LogLevel = "trace" | "debug" | "info" | "warn" | "error" | "fatal";
 
 export type Options = {
-  logFormat?: "json" | "pretty";
-  logLevelInString?: boolean;
-  sentryDsn?: string;
+  logFormat?: "json" | "pretty" | undefined;
+  logLevelInString?: boolean | undefined;
+  sentryDsn?: string | undefined;
 };
 
 export {
