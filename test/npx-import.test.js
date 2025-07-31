@@ -48,8 +48,8 @@ test("should be ensured that smee-client is the same version as in the package-l
   t.plan(2);
   t.strictSame(
     packageLockJson.packages["node_modules/@sentry/node"].version,
-    "9.38.0",
-    "Ensure that @sentry/node version is set to 9.38.0 in package-lock.json",
+    "9.43.0",
+    "Ensure that @sentry/node version is set to 9.43.0 in package-lock.json",
   );
   checkForFixedNpxImport(
     join(__dirname, "../index.js"),

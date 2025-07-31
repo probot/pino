@@ -78,7 +78,7 @@ export async function getTransformStream(options = {}) {
   } else {
     if (!sentry) {
       // Import Sentry dynamically to avoid loading it when not needed
-      sentry = await npxImport("@sentry/node@9.38.0", {
+      sentry = await npxImport("@sentry/node@9.43.0", {
         onlyPackageRunner: true,
       });
       init = sentry.init;
